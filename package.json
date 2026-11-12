@@ -1,0 +1,25 @@
+{
+  "name": "nova-ecommerce",
+  "version": "1.0.0",
+  "description": "Full-Stack Modern E-Commerce Web Application built with Express.js and Vanilla HTML/CSS/JS",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "test": "node server/test-api.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "fullstack",
+    "express",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}

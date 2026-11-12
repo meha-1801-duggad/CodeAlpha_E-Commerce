@@ -1,0 +1,113 @@
+[
+  {
+    "id": "ORD-13361",
+    "createdAt": "2026-11-12T06:14:01.019Z",
+    "status": "Processing",
+    "items": [
+      {
+        "id": "prod-1",
+        "name": "Aura SoundLink Pro Wireless Headphones",
+        "price": 249.99,
+        "quantity": 1,
+        "color": "Space Black",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80"
+      }
+    ],
+    "shippingDetails": {
+      "fullName": "Internship Evaluator",
+      "email": "evaluator@techcorp.com",
+      "address": "500 Tech Highway",
+      "city": "Silicon Valley",
+      "state": "CA",
+      "zip": "94016"
+    },
+    "shippingMethod": "Standard Ground Delivery (3-5 Days)",
+    "paymentMethod": "Credit Card (ending in 4242)",
+    "couponCode": "NOVA20",
+    "pricing": {
+      "subtotal": 249.99,
+      "discount": 50,
+      "shipping": 0,
+      "tax": 16,
+      "total": 215.99
+    },
+    "tracking": [
+      {
+        "status": "Order Placed",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Processing",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Shipped",
+        "time": "Pending",
+        "done": false
+      },
+      {
+        "status": "Delivered",
+        "time": "Pending",
+        "done": false
+      }
+    ]
+  },
+  {
+    "id": "ORD-94812",
+    "createdAt": "2026-11-10T06:11:44.359Z",
+    "status": "Delivered",
+    "items": [
+      {
+        "id": "prod-1",
+        "name": "Aura SoundLink Pro Wireless Headphones",
+        "price": 249.99,
+        "quantity": 1,
+        "color": "Space Black",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"
+      }
+    ],
+    "shippingDetails": {
+      "fullName": "Alex Morgan",
+      "email": "alex.morgan@example.com",
+      "phone": "+1 (555) 349-2810",
+      "address": "742 Evergreen Terrace",
+      "city": "Springfield",
+      "state": "OR",
+      "zip": "97477",
+      "country": "United States"
+    },
+    "shippingMethod": "Express Shipping ($12.00)",
+    "paymentMethod": "Credit Card (ending in 4242)",
+    "pricing": {
+      "subtotal": 249.99,
+      "shipping": 12,
+      "tax": 20,
+      "discount": 25,
+      "total": 256.99
+    },
+    "tracking": [
+      {
+        "status": "Order Placed",
+        "time": "2 days ago",
+        "done": true
+      },
+      {
+        "status": "Processing & Quality Check",
+        "time": "2 days ago",
+        "done": true
+      },
+      {
+        "status": "Shipped with FedEx Express",
+        "time": "Yesterday",
+        "done": true
+      },
+      {
+        "status": "Delivered to Front Door",
+        "time": "Today at 10:15 AM",
+        "done": true
+      }
+    ]
+  }
+]

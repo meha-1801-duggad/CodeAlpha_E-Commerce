@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details — NOVA LUXE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span>NOVA<span>LUXE</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html">Store</a></li>
+          <li><a href="/index.html#products">Products</a></li>
+          <li><a href="/cart.html">Cart</a></li>
+          <li><a href="/orders.html">Track Order</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="cart-toggle-btn" aria-label="Open shopping cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail Content -->
+  <main class="product-detail-page">
+    <div class="container" id="pdp-container">
+      
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" id="pdp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/index.html">Home</a>
+        <span>/</span>
+        <span style="color: var(--text-primary);">Loading...</span>
+      </nav>
+
+      <!-- Main PDP Grid -->
+      <div class="pdp-grid">
+        
+        <!-- Left: Image Gallery -->
+        <div class="pdp-gallery">
+          <div class="pdp-main-image-wrap">
+            <img id="pdp-main-image" src="" alt="Product view" class="pdp-main-image">
+          </div>
+          <div class="pdp-thumbnails" id="pdp-thumbnails">
+            <!-- Dynamically populated thumbnails -->
+          </div>
+        </div>
+
+        <!-- Right: Product Info & Buy Controls -->
+        <div class="pdp-info">
+          <span id="pdp-badge" class="card-badge bestseller pdp-badge" style="display: none;"></span>
+          <h1 class="pdp-title" id="pdp-title">Loading Product...</h1>
+          <p class="pdp-tagline" id="pdp-tagline"></p>
+
+          <div class="pdp-rating-row">
+            <span id="pdp-stars" style="color: var(--accent-amber); font-size: 1.1rem;">★★★★★</span>
+            <span id="pdp-reviews-count" style="font-size: 0.9rem; color: var(--text-muted);">4.9 (340 reviews)</span>
+          </div>
+
+          <div class="pdp-price-row">
+            <span class="pdp-current-price" id="pdp-price">$0.00</span>
+            <span class="pdp-orig-price" id="pdp-orig-price" style="display: none;">$0.00</span>
+            <span class="pdp-discount-pill" id="pdp-discount-pill" style="display: none;">SAVE 20%</span>
+          </div>
+
+          <!-- Color / Variant Picker -->
+          <div class="variant-block" id="pdp-variant-block">
+            <div class="variant-label">Selected Color: <strong id="pdp-color-label" style="color: var(--text-primary);">Standard</strong></div>
+            <div class="color-options" id="pdp-color-options">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Stock Indicator -->
+          <div class="stock-status-box">
+            <span class="stock-dot"></span>
+            <span id="pdp-stock-text">In Stock & Ready to Ship</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="pdp-actions-row">
+            <div class="qty-control">
+              <button class="qty-btn" id="pdp-qty-minus" aria-label="Decrease quantity">−</button>
+              <span class="qty-num" id="pdp-qty-val">1</span>
+              <button class="qty-btn" id="pdp-qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+            <button class="btn-add-cart-large" id="pdp-add-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Add to Cart
+            </button>
+            <button class="btn-secondary" id="pdp-buynow-btn" style="padding: 0.95rem 1.5rem; font-weight: 700;">
+              Buy Now
+            </button>
+          </div>
+
+          <!-- Shipping perks -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.15rem; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Free Worldwide Shipping</strong> on orders over $100</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>30-Day Money-Back Guarantee</strong> with free return pickup</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs: Features, Specs, Reviews -->
+      <section style="margin-top: 3.5rem;">
+        <div class="pdp-tabs-nav">
+          <button class="tab-btn active" data-tab="features">Highlights & Features</button>
+          <button class="tab-btn" data-tab="specs">Technical Specifications</button>
+          <button class="tab-btn" data-tab="reviews">Verified Customer Reviews</button>
+        </div>
+
+        <!-- Tab 1: Highlights -->
+        <div class="tab-pane active" id="tab-features">
+          <p id="pdp-description-text" style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; max-width: 800px;"></p>
+          <ul class="features-list" id="pdp-features-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- Tab 2: Specs -->
+        <div class="tab-pane" id="tab-specs">
+          <table class="specs-table">
+            <tbody id="pdp-specs-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab 3: Reviews -->
+        <div class="tab-pane" id="tab-reviews">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: var(--text-primary);">Marcus Vance</strong>
+                <span style="color: var(--accent-amber);">★★★★★</span>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                "Phenomenal build quality! Arrived within 2 days with express tracking. The tactile feel and audio precision far surpassed my expectations."
+              </p>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">Verified Buyer · Purchased 3 weeks ago</div>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: var(--text-primary);">Elena Rostova</strong>
+                <span style="color: var(--accent-amber);">★★★★★</span>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                "Clean minimalist aesthetic that blends seamlessly into my desk setup. The battery life is astonishingly reliable."
+              </p>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">Verified Buyer · Purchased 1 month ago</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Products -->
+      <section style="margin-top: 5rem;">
+        <h3 style="font-size: 1.45rem; font-weight: 800; margin-bottom: 1.75rem;">You Might Also Like</h3>
+        <div class="product-grid" id="related-products-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <div>© 2026 NOVA LUXE Technologies Inc.</div>
+      <a href="/index.html" style="color: var(--accent-primary);">← Back to Storefront</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/toast.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/product.js"></script>
+</body>
+</html>

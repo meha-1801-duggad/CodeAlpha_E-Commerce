@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order & Invoice — NOVA LUXE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/index.html" class="brand-logo">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span>NOVA<span>LUXE</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/index.html">Store</a></li>
+          <li><a href="/index.html#products">Products</a></li>
+          <li><a href="/cart.html">Cart</a></li>
+          <li><a href="/orders.html" class="active">Track Order</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/index.html" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+          Shop More
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="order-confirmation-page">
+    <div class="container">
+
+      <!-- Order Lookup Search Bar -->
+      <section style="max-width: 620px; margin: 0 auto 3rem; text-align: center;">
+        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Track Your Order</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">Enter your Nova Luxe Order ID (e.g. ORD-94812) to inspect real-time dispatch progress</p>
+        
+        <form id="order-lookup-form" style="display: flex; gap: 0.5rem;">
+          <input type="text" id="lookup-order-id-input" class="form-input" placeholder="Enter Order ID (e.g. ORD-94812)" style="flex: 1; text-transform: uppercase;">
+          <button type="submit" class="btn-primary" style="padding: 0 1.5rem;">Track</button>
+        </form>
+      </section>
+
+      <!-- Loading State -->
+      <div id="order-loading" style="text-align: center; padding: 3rem 0; color: var(--text-muted); display: none;">
+        <p>Retrieving order details from server...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="order-error" style="display: none;"></div>
+
+      <!-- Order Details Container -->
+      <div id="order-details-container" style="display: none;">
+
+        <!-- Live Status Tracker Card with Simulation Button -->
+        <div class="status-tracker-card">
+          <div class="tracker-header">
+            <div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Tracking Status</div>
+              <h2 style="font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
+                <span id="display-order-id">ORD-00000</span>
+                <span id="display-order-status-badge" class="card-badge" style="position: static; font-size: 0.8rem; background: var(--accent-primary);">Order Placed</span>
+              </h2>
+            </div>
+
+            <!-- Internship Interactive Demo Button -->
+            <button id="btn-advance-status" class="btn-simulate-status">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              Simulate Next Status Update
+            </button>
+          </div>
+
+          <!-- Stepper Timeline -->
+          <div class="stepper-timeline">
+            <div class="stepper-line">
+              <div class="stepper-line-fill" id="stepper-fill-bar" style="width: 0%;"></div>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="step-item done" id="step-1">
+              <div class="step-circle">✓</div>
+              <div class="step-label">Order Placed</div>
+              <div class="step-time">Confirmed</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item" id="step-2">
+              <div class="step-circle">2</div>
+              <div class="step-label">Processing</div>
+              <div class="step-time">Quality Check</div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item" id="step-3">
+              <div class="step-circle">3</div>
+              <div class="step-label">Shipped</div>
+              <div class="step-time">In Transit</div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-item" id="step-4">
+              <div class="step-circle">4</div>
+              <div class="step-label">Delivered</div>
+              <div class="step-time">At Destination</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(99, 102, 241, 0.06); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div>💡 <strong>Interactive Demo Feature:</strong> Click <em>"Simulate Next Status Update"</em> to see backend status transitions and order processing in real-time.</div>
+            <button class="btn-secondary btn-print" onclick="window.print()" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+              🖨️ Print Invoice Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- Printable Invoice & Order Details -->
+        <div class="invoice-card">
+          <div class="invoice-header">
+            <div>
+              <div class="brand-logo" style="margin-bottom: 0.5rem;">
+                <div class="logo-icon" style="width: 28px; height: 28px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                </div>
+                <span style="font-size: 1.15rem;">NOVA<span>LUXE</span></span>
+              </div>
+              <div style="color: var(--text-secondary); font-size: 0.85rem;">Official Purchase Invoice & Packing Slip</div>
+            </div>
+
+            <div style="text-align: right;">
+              <div style="font-size: 0.85rem; color: var(--text-muted);">Date Placed</div>
+              <div id="display-order-date" style="font-weight: 700; font-size: 0.95rem;">Nov 12, 2026</div>
+            </div>
+          </div>
+
+          <!-- Customer & Shipping Summary Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Customer</div>
+              <div id="display-customer-name" style="font-weight: 600;">-</div>
+              <div id="display-customer-email" style="font-size: 0.85rem; color: var(--text-secondary);">-</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Shipping Address</div>
+              <div id="display-shipping-address" style="font-size: 0.88rem; color: var(--text-secondary);">-</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Delivery Tier</div>
+              <div id="display-shipping-method" style="font-size: 0.88rem; color: var(--text-secondary);">-</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Payment Method</div>
+              <div id="display-payment-method" style="font-size: 0.88rem; color: var(--text-secondary);">-</div>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Item Description</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="invoice-items-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+
+          <!-- Financial Breakdown Table -->
+          <div style="display: flex; justify-content: flex-end;">
+            <div style="width: 100%; max-width: 320px;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Subtotal:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 600;" id="invoice-subtotal">$0.00</td>
+                </tr>
+                <tr id="invoice-discount-row" style="display: none;">
+                  <td style="padding: 0.4rem 0; color: var(--accent-emerald); font-size: 0.9rem;">Discount:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 600; color: var(--accent-emerald);" id="invoice-discount">-$0.00</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Shipping:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 600;" id="invoice-shipping">$0.00</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Tax (8%):</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 600;" id="invoice-tax">$0.00</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--border-color);">
+                  <td style="padding: 0.8rem 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">Total Paid:</td>
+                  <td style="padding: 0.8rem 0; text-align: right; font-size: 1.15rem; font-weight: 800; color: var(--accent-primary);" id="invoice-total">$0.00</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <div>© 2026 NOVA LUXE Technologies Inc.</div>
+      <a href="/index.html" style="color: var(--accent-primary);">← Back to Storefront</a>
+    </div>
+  </footer>
+
+  <script src="/js/toast.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/orders.js"></script>
+</body>
+</html>
