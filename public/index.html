@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVA LUXE — Modern Tech & Lifestyle Store</title>
+  <title>NOVA LUXE 🇮🇳 — India's Premium Tech & Lifestyle Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,189 +11,265 @@
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <span>🇮🇳 <strong>MEGA FESTIVE SALE IS LIVE:</strong> Get Up to 60% OFF + Extra 20% with code <span class="coupon-pill">FESTIVE20</span></span>
+    <span style="opacity: 0.6;">|</span>
+    <span>⚡ FREE Express BlueDart Delivery on orders above ₹999</span>
+  </div>
+
+  <!-- Main Navbar -->
   <header class="navbar">
     <div class="container nav-container">
       <a href="/index.html" class="brand-logo">
         <div class="logo-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
             <polyline points="2 17 12 22 22 17"></polyline>
             <polyline points="2 12 12 17 22 12"></polyline>
           </svg>
         </div>
-        <span>NOVA<span>LUXE</span></span>
+        <span>NOVA<span>LUXE</span> <span class="country-flag">🇮🇳</span></span>
       </a>
 
-      <nav>
-        <ul class="nav-links">
-          <li><a href="/index.html" class="active">Store</a></li>
-          <li><a href="/index.html#products">Products</a></li>
-          <li><a href="/cart.html">Cart</a></li>
-          <li><a href="/orders.html">Track Order</a></li>
-        </ul>
-      </nav>
+      <!-- Central Search Bar (Amazon / Flipkart Style) -->
+      <div class="header-search-wrap">
+        <svg class="header-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="header-search-input" class="header-search-input" placeholder="Search for headphones, tablets, smartwatches, keyboards...">
+      </div>
 
+      <!-- Action Icons -->
       <div class="nav-actions">
-        <a href="/orders.html" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+        <div class="nav-auth-container"></div>
+
+        <a href="/orders.html" class="btn-secondary" style="padding: 0.55rem 1rem; font-size: 0.85rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
           Track Order
         </a>
 
-        <button class="cart-toggle-btn" aria-label="Open shopping cart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Wishlist Button -->
+        <button class="nav-icon-btn" onclick="Toast.info('Explore wishlisted items or click heart icons on products!')" title="Wishlist" aria-label="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+          <span class="badge-counter wishlist-badge" style="display: none;">0</span>
+        </button>
+
+        <!-- Cart Button -->
+        <button class="nav-icon-btn cart-toggle-btn" title="Shopping Cart" aria-label="Shopping Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="9" cy="21" r="1"></circle>
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
           </svg>
-          <span class="cart-badge" style="display: none;">0</span>
+          <span class="badge-counter cart-badge" style="display: none;">0</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Hero Banner -->
-  <section class="hero-section">
-    <div class="container hero-content">
-      <div class="hero-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        NEW ARRIVALS 2026 · USE CODE <strong>NOVA20</strong> FOR 20% OFF
-      </div>
-      <h1 class="hero-title">
-        Engineered for Excellence.<br>
-        <span class="gradient-text">Designed for Your Lifestyle.</span>
-      </h1>
-      <p class="hero-subtitle">
-        Discover state-of-the-art audio gear, ergonomic computing devices, and ambient smart home technology built with obsessive attention to craft.
-      </p>
-      <div class="hero-actions">
-        <a href="#products" class="btn-primary">
-          Explore Catalog
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-        </a>
-        <a href="/cart.html" class="btn-secondary">
-          View Shopping Cart
-        </a>
-      </div>
-
-      <!-- Trust Badges -->
-      <div class="hero-features">
-        <div class="hero-feature-item">
-          <div class="hero-feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-          </div>
-          <span>Free Express Shipping over $100</span>
-        </div>
-        <div class="hero-feature-item">
-          <div class="hero-feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          </div>
-          <span>2-Year Official Warranty</span>
-        </div>
-        <div class="hero-feature-item">
-          <div class="hero-feature-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-          </div>
-          <span>30-Day Hassle-Free Returns</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Store Controls (Search, Categories, Sort) -->
-  <section class="store-controls-section" id="products">
-    <div class="container store-controls-bar">
-      <div class="search-and-sort">
-        <div class="search-input-wrapper">
-          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="search-input" class="search-input" placeholder="Search headphones, keyboards, projectors...">
-          <button id="search-clear" class="search-clear-btn" aria-label="Clear search">✕</button>
-        </div>
-
-        <div class="sort-wrapper">
-          <label for="sort-select" class="sort-label">Sort by:</label>
-          <select id="sort-select" class="sort-select">
-            <option value="featured">Featured Items</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="rating">Customer Rating</option>
-            <option value="reviews">Most Reviewed</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Categories Pills -->
-      <div class="category-pills-row" id="category-pills-row">
-        <!-- Injected via JavaScript -->
-      </div>
-    </div>
-  </section>
-
-  <!-- Product Listing Grid -->
-  <main class="product-grid-section">
+  <!-- Sub-Header Categories Strip (Flipkart / Amazon style) -->
+  <nav class="sub-nav-categories">
     <div class="container">
-      <div class="products-count-bar">
-        <span id="products-count">Loading products...</span>
-        <span>Showing all available in-stock items</span>
+      <ul class="category-nav-list">
+        <li class="cat-nav-item active" data-category="all">⚡ All Categories</li>
+        <li class="cat-nav-item" data-category="Audio">🎧 Audio & Sound</li>
+        <li class="cat-nav-item" data-category="Wearables">⌚ Smartwatches & Fitness</li>
+        <li class="cat-nav-item" data-category="Computing">💻 Laptops & Computing</li>
+        <li class="cat-nav-item" data-category="Smart Home">🏠 Smart Home & Living</li>
+        <li class="cat-nav-item" data-category="Accessories">⚡ Premium Accessories</li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Banner with Live Flash Sale Countdown -->
+  <section class="container">
+    <div class="hero-banner">
+      <div class="hero-text">
+        <div class="festive-tag">
+          ⚡ FESTIVE TECH BONANZA 2026
+        </div>
+        <h1 class="hero-title">
+          India's Most Loved Tech.<br>
+          <span>Unbeatable Festive Prices.</span>
+        </h1>
+        <p class="hero-desc">
+          Experience studio-grade audio, aerospace titanium smartwatches, and next-gen ergonomic workstations with 100% genuine brand warranty, instant UPI payment, and fast express delivery across all Indian pincodes.
+        </p>
+        <div class="hero-cta-row">
+          <a href="#products" class="btn-primary" style="background: linear-gradient(135deg, #ea580c, #c2410c);">
+            Explore Deals & Offers
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          </a>
+          <a href="/orders.html" class="btn-secondary" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3);">
+            Track Existing Order
+          </a>
+        </div>
       </div>
 
-      <div class="product-grid" id="product-grid">
-        <!-- Rendered dynamically by main.js -->
+      <!-- Live Flash Sale Countdown Card -->
+      <div class="flash-timer-card">
+        <div style="font-size: 0.82rem; font-weight: 800; letter-spacing: 0.05em; color: #fdba74; text-transform: uppercase;">
+          <span class="live-dot"></span>FLASH SALE ENDS IN
+        </div>
+        <div class="timer-boxes">
+          <div class="timer-box">
+            <div class="timer-num" id="timer-hours">05</div>
+            <div class="timer-lbl">Hours</div>
+          </div>
+          <div class="timer-box">
+            <div class="timer-num" id="timer-minutes">42</div>
+            <div class="timer-lbl">Mins</div>
+          </div>
+          <div class="timer-box">
+            <div class="timer-num" id="timer-seconds">19</div>
+            <div class="timer-lbl">Secs</div>
+          </div>
+        </div>
+        <div style="font-size: 0.82rem; color: #cbd5e1;">Use code <strong style="color: #fde047;">FESTIVE20</strong> at checkout for 20% extra discount</div>
       </div>
+    </div>
+  </section>
+
+  <!-- Trust Badges Strip -->
+  <section class="container">
+    <div class="trust-strip">
+      <div class="trust-item">
+        <div class="trust-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        </div>
+        <div>
+          <div class="trust-title">Free Express Delivery</div>
+          <div class="trust-desc">Fast dispatch on orders above ₹999</div>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <div>
+          <div class="trust-title">100% Genuine Brands</div>
+          <div class="trust-desc">1-2 Year official brand warranty</div>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </div>
+        <div>
+          <div class="trust-title">7-Day Easy Replacement</div>
+          <div class="trust-desc">Hassle-free return & doorstep pickup</div>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        </div>
+        <div>
+          <div class="trust-title">UPI & COD Available</div>
+          <div class="trust-desc">Pay via GPay, PhonePe, Cards or Cash</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Catalog Section -->
+  <main class="container" id="products">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Trending Tech Deals</h2>
+        <p class="section-subtitle">Hand-picked gear verified by tech critics & certified for Indian standards</p>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <!-- Category Filter Pills -->
+        <div class="category-pills-row" id="category-pills-row" style="display: flex; gap: 0.5rem;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Sort Select -->
+        <select id="sort-select" class="form-select" style="padding: 0.55rem 1.25rem; font-size: 0.88rem; font-weight: 600; cursor: pointer;">
+          <option value="featured">Featured Deals</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Customer Ratings</option>
+          <option value="reviews">Most Reviewed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="product-grid">
+      <!-- Dynamically populated by main.js -->
     </div>
   </main>
 
-  <!-- Footer -->
+  <!-- Comprehensive Footer (Real Indian E-Commerce Layout) -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="brand-logo" style="margin-bottom: 1rem;">
+          <div class="brand-logo" style="margin-bottom: 1rem; color: #fff;">
             <div class="logo-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
             </div>
-            <span>NOVA<span>LUXE</span></span>
+            <span>NOVA<span style="color: #818cf8;">LUXE</span> 🇮🇳</span>
           </div>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; max-width: 320px;">
-            Full-Stack E-Commerce web application featuring a modern REST backend, persistent order processing, and dynamic responsive storefront.
+          <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6; max-width: 340px; margin-bottom: 1.25rem;">
+            India's premier high-performance consumer technology destination. Registered Office: Prestige Tech Cloud, Whitefield, Bengaluru, Karnataka 560066.
           </p>
+          <div style="font-size: 0.82rem; color: #cbd5e1;">
+            <div>GSTIN: <strong style="color: #818cf8;">29AAACN1234F1Z5</strong></div>
+            <div>Toll-Free Support: <strong>1800-NOVA-STORE (9 AM - 9 PM)</strong></div>
+          </div>
         </div>
 
         <div>
-          <h4 class="footer-col-title">Shop Categories</h4>
+          <h4 class="footer-col-title">Top Categories</h4>
           <ul class="footer-links">
-            <li><a href="/index.html">Audio & Headphones</a></li>
-            <li><a href="/index.html">Wearables & Smartwatches</a></li>
-            <li><a href="/index.html">Computing & Keyboards</a></li>
-            <li><a href="/index.html">Smart Home Lighting</a></li>
+            <li><a href="#products">Wireless ANC Headphones</a></li>
+            <li><a href="#products">Titanium Ultra Smartwatches</a></li>
+            <li><a href="#products">Mechanical RGB Keyboards</a></li>
+            <li><a href="#products">4K Laser Cinema Projectors</a></li>
+            <li><a href="#products">65W GaN Fast Chargers</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer-col-title">Order & Service</h4>
+          <h4 class="footer-col-title">Customer Care</h4>
           <ul class="footer-links">
             <li><a href="/orders.html">Track Order Status</a></li>
-            <li><a href="/cart.html">View Shopping Cart</a></li>
+            <li><a href="/cart.html">View Shopping Bag</a></li>
             <li><a href="/checkout.html">Express Checkout</a></li>
-            <li><a href="/api/health" target="_blank">Backend API Health</a></li>
+            <li><a href="/api/health" target="_blank">API Health Status</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer-col-title">Internship Demo Info</h4>
-          <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
-            Built with <strong>HTML5, CSS3, JavaScript</strong>, and <strong>Express.js</strong> (Node.js). Supports coupon codes:
+          <h4 class="footer-col-title">Festive Coupons & Discounts</h4>
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem;">
+            Use these active coupon codes at checkout to unlock savings:
           </p>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <code style="background: var(--bg-card); padding: 0.25rem 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--accent-secondary);">NOVA20 (20% Off)</code>
-            <code style="background: var(--bg-card); padding: 0.25rem 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--accent-emerald);">FREESHIP</code>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="background: rgba(255,255,255,0.06); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px dashed #6366f1; font-size: 0.82rem;">
+              <strong style="color: #fde047;">FESTIVE20</strong> — 20% Instant Discount
+            </div>
+            <div style="background: rgba(255,255,255,0.06); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px dashed #10b981; font-size: 0.82rem;">
+              <strong style="color: #6ee7b7;">FLAT500</strong> — Flat ₹500 Off above ₹2,000
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Payment & Security Strip -->
       <div class="footer-bottom">
-        <div>© 2026 NOVA LUXE Technologies Inc. Full-Stack E-Commerce Project.</div>
-        <div>Designed with high-level UI/UX & Responsive Layouts.</div>
+        <div>
+          <span>Accepted Payment Modes: <strong>UPI (GPay / PhonePe / Paytm), RuPay, Visa, MasterCard, NetBanking, COD</strong></span>
+        </div>
+        <div>
+          <span>© 2026 NOVA LUXE Retail India Pvt. Ltd. All rights reserved.</span>
+        </div>
       </div>
     </div>
   </footer>
@@ -201,6 +277,7 @@
   <!-- Scripts -->
   <script src="/js/toast.js"></script>
   <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
   <script src="/js/cart.js"></script>
   <script src="/js/main.js"></script>
 </body>

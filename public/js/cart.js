@@ -1,4 +1,55 @@
-// Cart State & Drawer Manager
+// Global Currency & Cart State Manager for Indian E-Commerce
+function formatINR(amount) {
+  if (isNaN(amount) || amount === null) return '₹0';
+  return '₹' + Math.round(amount).toLocaleString('en-IN');
+}
+
+// Wishlist Manager
+const Wishlist = {
+  items: [],
+
+  init() {
+    try {
+      const saved = localStorage.getItem('nova_wishlist');
+      this.items = saved ? JSON.parse(saved) : [];
+    } catch {
+      this.items = [];
+    }
+    this.renderBadge();
+  },
+
+  has(id) {
+    return this.items.includes(id);
+  },
+
+  toggle(product) {
+    const id = typeof product === 'string' ? product : product.id;
+    const name = product.name || 'Item';
+    const index = this.items.indexOf(id);
+
+    if (index > -1) {
+      this.items.splice(index, 1);
+      Toast.info(`Removed ${name} from your Wishlist`);
+    } else {
+      this.items.push(id);
+      Toast.success(`Added ${name} to your Wishlist ❤️`);
+    }
+
+    localStorage.setItem('nova_wishlist', JSON.stringify(this.items));
+    this.renderBadge();
+    window.dispatchEvent(new CustomEvent('wishlistUpdated', { detail: { items: this.items } }));
+  },
+
+  renderBadge() {
+    const badges = document.querySelectorAll('.wishlist-badge');
+    badges.forEach(b => {
+      b.textContent = this.items.length;
+      b.style.display = this.items.length > 0 ? 'grid' : 'none';
+    });
+  }
+};
+
+// Cart State & Slide-Over Drawer Manager
 const Cart = {
   items: [],
   appliedCoupon: null,
@@ -8,6 +59,7 @@ const Cart = {
     this.renderBadge();
     this.injectDrawer();
     this.bindGlobalEvents();
+    Wishlist.init();
   },
 
   load() {
@@ -97,7 +149,7 @@ const Cart = {
       badge.textContent = count;
       badge.style.display = count > 0 ? 'grid' : 'none';
       badge.classList.remove('bump');
-      void badge.offsetWidth; // trigger reflow
+      void badge.offsetWidth;
       if (count > 0) badge.classList.add('bump');
     });
   },
@@ -113,7 +165,7 @@ const Cart = {
         <div class="cart-drawer-header">
           <div class="cart-drawer-title">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            Your Cart (<span id="drawer-item-count">0</span>)
+            Your Shopping Cart (<span id="drawer-item-count">0</span>)
           </div>
           <button class="cart-close-btn" id="drawer-close-btn" aria-label="Close cart">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -121,7 +173,7 @@ const Cart = {
         </div>
 
         <div class="free-shipping-progress" id="drawer-free-shipping">
-          <div class="progress-text" id="free-shipping-text">Add $100.00 more for Free Shipping!</div>
+          <div class="progress-text" id="free-shipping-text">Add ₹999 more for Free Express Delivery across India!</div>
           <div class="progress-bar-track">
             <div class="progress-bar-fill" id="free-shipping-bar" style="width: 0%"></div>
           </div>
@@ -133,19 +185,19 @@ const Cart = {
 
         <div class="cart-drawer-footer" id="drawer-footer">
           <div class="cart-summary-line">
-            <span>Subtotal</span>
-            <span id="drawer-subtotal">$0.00</span>
+            <span>Bag Subtotal</span>
+            <span id="drawer-subtotal">₹0</span>
           </div>
           <div class="cart-summary-line total-line">
-            <span>Estimated Total</span>
-            <span id="drawer-total">$0.00</span>
+            <span>Estimated Total (Incl. GST)</span>
+            <span id="drawer-total" style="color: var(--primary);">₹0</span>
           </div>
-          <div class="cart-drawer-actions">
-            <a href="/checkout.html" class="btn-primary" style="justify-content: center;">
-              Proceed to Checkout
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="/checkout.html" class="btn-primary" style="justify-content: center; padding: 0.95rem;">
+              Proceed to Buy (Fast Checkout)
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
-            <a href="/cart.html" class="btn-secondary" style="justify-content: center;">View Detailed Cart</a>
+            <a href="/cart.html" class="btn-secondary" style="justify-content: center; padding: 0.85rem;">View Full Bag & Apply Coupons</a>
           </div>
         </div>
       </div>
@@ -190,32 +242,32 @@ const Cart = {
     const subtotal = this.getSubtotal();
 
     if (countSpan) countSpan.textContent = totalCount;
-    if (subtotalSpan) subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
-    if (totalSpan) totalSpan.textContent = `$${subtotal.toFixed(2)}`;
+    if (subtotalSpan) subtotalSpan.textContent = formatINR(subtotal);
+    if (totalSpan) totalSpan.textContent = formatINR(subtotal);
 
-    // Free shipping threshold: $100
-    const threshold = 100;
+    // Free delivery threshold for India: ₹999
+    const threshold = 999;
     if (freeShippingText && freeShippingBar) {
       if (subtotal >= threshold) {
-        freeShippingText.innerHTML = `🎉 <strong>Congratulations!</strong> You unlocked Free Standard Shipping!`;
+        freeShippingText.innerHTML = `🎉 <strong>Congratulations!</strong> You unlocked <strong>FREE Express Delivery</strong> across India!`;
         freeShippingBar.style.width = '100%';
       } else {
-        const remaining = (threshold - subtotal).toFixed(2);
+        const remaining = threshold - subtotal;
         const percent = Math.min(100, Math.round((subtotal / threshold) * 100));
-        freeShippingText.innerHTML = `Add <strong>$${remaining}</strong> more for <strong>Free Shipping!</strong>`;
+        freeShippingText.innerHTML = `Add <strong>${formatINR(remaining)}</strong> more for <strong>FREE Delivery!</strong>`;
         freeShippingBar.style.width = `${percent}%`;
       }
     }
 
     if (this.items.length === 0) {
       list.innerHTML = `
-        <div class="cart-empty-state">
-          <div class="cart-empty-icon">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2.5rem 1.5rem; color: var(--text-muted);">
+          <div style="width: 64px; height: 64px; border-radius: var(--radius-full); background: var(--bg-subtle); display: grid; place-items: center; margin-bottom: 1rem; color: var(--text-secondary);">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
           </div>
-          <h3>Your cart is empty</h3>
-          <p style="font-size: 0.88rem; margin-top: 0.5rem;">Explore our curated tech and lifestyle collection to get started.</p>
-          <a href="/index.html#products" class="btn-primary" style="margin-top: 1.5rem; font-size: 0.85rem;" onclick="Cart.closeDrawer()">Start Shopping</a>
+          <h3 style="color: var(--text-main); font-weight: 700;">Your shopping bag is empty</h3>
+          <p style="font-size: 0.88rem; margin: 0.5rem 0 1.5rem; color: var(--text-secondary);">Explore top-rated electronics, audio, and festive specials with easy UPI payment.</p>
+          <a href="/index.html#products" class="btn-primary" style="font-size: 0.85rem;" onclick="Cart.closeDrawer()">Start Shopping Now</a>
         </div>
       `;
       if (footer) footer.style.display = 'none';
@@ -231,7 +283,7 @@ const Cart = {
           <div class="cart-item-title">${item.name}</div>
           <div class="cart-item-variant">Variant: ${item.color}</div>
           <div class="cart-item-bottom">
-            <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
+            <span class="cart-item-price">${formatINR(item.price * item.quantity)}</span>
             <div class="qty-control">
               <button class="qty-btn" onclick="Cart.updateQty('${item.id}', '${item.color}', -1)" aria-label="Decrease quantity">−</button>
               <span class="qty-num">${item.quantity}</span>
@@ -256,7 +308,6 @@ const Cart = {
   }
 };
 
-// Auto initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   Cart.init();
 });

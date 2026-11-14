@@ -1,10 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const db = require('../data/database');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'nova_luxe_secure_jwt_secret_key_2026';
+
+// Helper to extract optional user from token
+function getOptionalUser(req) {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token) {
+      return jwt.verify(token, JWT_SECRET);
+    }
+  } catch (e) {
+    // Ignore invalid/expired tokens for optional user lookup
+  }
+  return null;
+}
 
 // POST /api/orders/validate-coupon
 router.post('/validate-coupon', (req, res) => {
-  const { code } = req.body;
+  const { code, subtotal } = req.body;
   if (!code) {
     return res.status(400).json({ success: false, error: 'Coupon code required' });
   }
@@ -14,6 +31,13 @@ router.post('/validate-coupon', (req, res) => {
     return res.status(404).json({ success: false, error: 'Invalid or expired coupon code' });
   }
 
+  if (coupon.minOrder && subtotal && subtotal < coupon.minOrder) {
+    return res.status(400).json({
+      success: false,
+      error: `Coupon ${coupon.code} requires a minimum order of ₹${coupon.minOrder.toLocaleString('en-IN')}`
+    });
+  }
+
   res.json({ success: true, coupon });
 });
 
@@ -21,9 +45,24 @@ router.post('/validate-coupon', (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const orders = await db.getOrders();
-    res.json({ success: true, orders });
+    res.json({ success: true, count: orders.length, orders });
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Failed to fetch orders' });
+    res.status(500).json({ success: false, error: 'Failed to fetch orders: ' + err.message });
+  }
+});
+
+// GET /api/orders/my-orders - list orders for currently logged in user
+router.get('/user/my-orders', async (req, res) => {
+  try {
+    const user = getOptionalUser(req);
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Please log in to view your order history.' });
+    }
+
+    const orders = await db.getOrdersByUserId(user.id);
+    res.json({ success: true, count: orders.length, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to fetch user orders: ' + err.message });
   }
 });
 
@@ -40,20 +79,24 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/orders - create a new order
+// POST /api/orders - create a new order (Indian Currency, SQLite DB, linked to user if logged in)
 router.post('/', async (req, res) => {
   try {
-    const { items, shippingDetails, shippingMethod, paymentMethod, couponCode } = req.body;
+    const { items, shippingDetails, shippingMethod, paymentMethod, couponCode, upiId } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ success: false, error: 'Shopping cart is empty' });
     }
 
-    if (!shippingDetails || !shippingDetails.fullName || !shippingDetails.email || !shippingDetails.address) {
-      return res.status(400).json({ success: false, error: 'Please provide full shipping details' });
+    if (!shippingDetails || !shippingDetails.fullName || !shippingDetails.phone || !shippingDetails.address || !shippingDetails.pincode) {
+      return res.status(400).json({ success: false, error: 'Please provide complete delivery details including 6-digit Pincode & Phone' });
     }
 
-    // Verify products & calculate prices on the server to prevent price tampering
+    // Check optional authenticated user
+    const authenticatedUser = getOptionalUser(req);
+    const userId = authenticatedUser ? authenticatedUser.id : (req.body.userId || null);
+
+    // Verify products & calculate prices in INR on server
     const allProducts = await db.getProducts();
     let subtotal = 0;
     const validatedItems = [];
@@ -78,18 +121,15 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Calculate shipping
+    // Shipping in INR: Free above ₹999, otherwise ₹99; Express is ₹199
     let shipping = 0;
     if (shippingMethod === 'express') {
-      shipping = 14.99;
-    } else if (shippingMethod === 'priority') {
-      shipping = 24.99;
+      shipping = 199;
     } else {
-      // Standard shipping is free over $100, otherwise $4.99
-      shipping = subtotal >= 100 ? 0 : 4.99;
+      shipping = subtotal >= 999 ? 0 : 99;
     }
 
-    // Apply Coupon if valid
+    // Apply Coupon
     let discount = 0;
     let appliedCoupon = null;
     if (couponCode) {
@@ -97,7 +137,9 @@ router.post('/', async (req, res) => {
       if (coupon) {
         appliedCoupon = coupon.code;
         if (coupon.discountPercent) {
-          discount = (subtotal * coupon.discountPercent) / 100;
+          discount = Math.round((subtotal * coupon.discountPercent) / 100);
+        } else if (coupon.flatAmount) {
+          discount = Math.min(subtotal, coupon.flatAmount);
         }
         if (coupon.freeShipping) {
           shipping = 0;
@@ -105,33 +147,53 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // Tax calculation (8% standard estimate)
-    const tax = Math.round((subtotal - discount) * 0.08 * 100) / 100;
-    const total = Math.max(0, Math.round((subtotal - discount + shipping + tax) * 100) / 100);
+    // GST Breakdown (18% GST: 9% CGST + 9% SGST)
+    const discountedSubtotal = Math.max(0, subtotal - discount);
+    const cgst = Math.round(discountedSubtotal * 0.09);
+    const sgst = Math.round(discountedSubtotal * 0.09);
+    const totalGst = cgst + sgst;
+    const total = Math.max(0, discountedSubtotal + shipping + totalGst);
 
-    // Generate Order ID
+    // Generate Indian Order ID
     const randomNum = Math.floor(10000 + Math.random() * 90000);
-    const orderId = `ORD-${randomNum}`;
+    const orderId = `ORD-IN-${randomNum}`;
 
     const newOrder = {
       id: orderId,
+      userId: userId,
       createdAt: new Date().toISOString(),
       status: "Order Placed",
       items: validatedItems,
-      shippingDetails,
-      shippingMethod: shippingMethod === 'express' 
-        ? 'Express Shipping (1-2 Days)' 
-        : shippingMethod === 'priority'
-          ? 'Priority Overnight'
-          : 'Standard Ground Delivery (3-5 Days)',
-      paymentMethod: paymentMethod || 'Credit Card',
+      shippingDetails: {
+        ...shippingDetails,
+        country: "India"
+      },
+      shippingMethod: shippingMethod === 'express'
+        ? 'BlueDart Express Air (1-2 Days)'
+        : 'Standard Ground Delivery (3-5 Days)',
+      paymentMethod: paymentMethod === 'upi'
+        ? `UPI Instant (${upiId || 'PhonePe / GPay QR'})`
+        : paymentMethod === 'card'
+          ? 'Credit / Debit Card (RuPay / Visa / Master)'
+          : paymentMethod === 'netbanking'
+            ? 'NetBanking (HDFC / ICICI / SBI)'
+            : 'Cash on Delivery (COD)',
       couponCode: appliedCoupon,
       pricing: {
-        subtotal: parseFloat(subtotal.toFixed(2)),
-        discount: parseFloat(discount.toFixed(2)),
-        shipping: parseFloat(shipping.toFixed(2)),
-        tax: parseFloat(tax.toFixed(2)),
-        total: parseFloat(total.toFixed(2))
+        currency: "INR",
+        currencySymbol: "₹",
+        subtotal,
+        discount,
+        shipping,
+        cgst,
+        sgst,
+        totalGst,
+        total
+      },
+      gstDetails: {
+        sellerGstin: "29AAACN1234F1Z5",
+        hsnCode: "85183000",
+        stateOfSupply: shippingDetails.state || "Karnataka"
       },
       tracking: [
         { status: "Order Placed", time: "Just now", done: true },
@@ -145,7 +207,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Order placed successfully',
+      message: 'Order placed successfully and recorded in SQLite database',
       order: savedOrder
     });
   } catch (err) {

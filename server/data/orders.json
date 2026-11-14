@@ -1,5 +1,137 @@
 [
   {
+    "id": "ORD-IN-71144",
+    "createdAt": "2026-11-13T15:54:48.656Z",
+    "status": "Delivered",
+    "items": [
+      {
+        "id": "prod-1",
+        "name": "Aura SoundLink Pro Wireless Headphones",
+        "price": 14999,
+        "quantity": 1,
+        "color": "Space Black",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80"
+      }
+    ],
+    "shippingDetails": {
+      "fullName": "Rahul Sharma",
+      "email": "rahul.sharma@example.com",
+      "phone": "9876543210",
+      "address": "Flat 402, Green Glen Layout, Bellandur",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "pincode": "560103",
+      "country": "India"
+    },
+    "shippingMethod": "Standard Ground Delivery (3-5 Days)",
+    "paymentMethod": "Cash on Delivery (COD)",
+    "couponCode": null,
+    "pricing": {
+      "currency": "INR",
+      "currencySymbol": "₹",
+      "subtotal": 14999,
+      "discount": 0,
+      "shipping": 0,
+      "cgst": 1350,
+      "sgst": 1350,
+      "totalGst": 2700,
+      "total": 17699
+    },
+    "gstDetails": {
+      "sellerGstin": "29AAACN1234F1Z5",
+      "hsnCode": "85183000",
+      "stateOfSupply": "Karnataka"
+    },
+    "tracking": [
+      {
+        "status": "Order Placed",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Processing",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Shipped",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Delivered",
+        "time": "Completed recently",
+        "done": true
+      }
+    ]
+  },
+  {
+    "id": "ORD-IN-83270",
+    "createdAt": "2026-11-13T15:47:47.821Z",
+    "status": "Processing",
+    "items": [
+      {
+        "id": "prod-1",
+        "name": "Aura SoundLink Pro Wireless Headphones",
+        "price": 14999,
+        "quantity": 1,
+        "color": "Space Black",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80"
+      }
+    ],
+    "shippingDetails": {
+      "fullName": "Rahul Sharma",
+      "email": "rahul@example.com",
+      "phone": "9876543210",
+      "address": "Flat 402, Bellandur",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "pincode": "560103",
+      "country": "India"
+    },
+    "shippingMethod": "Standard Ground Delivery (3-5 Days)",
+    "paymentMethod": "UPI Instant (rahul@okaxis)",
+    "couponCode": "FESTIVE20",
+    "pricing": {
+      "currency": "INR",
+      "currencySymbol": "₹",
+      "subtotal": 14999,
+      "discount": 3000,
+      "shipping": 0,
+      "cgst": 1080,
+      "sgst": 1080,
+      "totalGst": 2160,
+      "total": 14159
+    },
+    "gstDetails": {
+      "sellerGstin": "29AAACN1234F1Z5",
+      "hsnCode": "85183000",
+      "stateOfSupply": "Karnataka"
+    },
+    "tracking": [
+      {
+        "status": "Order Placed",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Processing",
+        "time": "Completed recently",
+        "done": true
+      },
+      {
+        "status": "Shipped",
+        "time": "Pending",
+        "done": false
+      },
+      {
+        "status": "Delivered",
+        "time": "Pending",
+        "done": false
+      }
+    ]
+  },
+  {
     "id": "ORD-13361",
     "createdAt": "2026-11-12T06:14:01.019Z",
     "status": "Processing",

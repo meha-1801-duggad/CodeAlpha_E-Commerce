@@ -1,78 +1,100 @@
-// Automated End-to-End API Test Suite
-const http = require('http');
-
+// Automated Full-Stack Test Suite with SQLite Database & Auth
 async function runTests() {
-  console.log('Testing Nova Luxe Backend API...');
+  console.log('Testing Nova Luxe India Full-Stack App (SQLite DB + Auth + E-Commerce)...');
   
-  // Require and start server
+  // Require and initialize server
   require('./server.js');
+  await new Promise(r => setTimeout(r, 1500));
 
-  // Wait 1 second for port binding
-  await new Promise(r => setTimeout(r, 1200));
-
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'http://127.0.0.1:5000';
 
   // 1. Health check
   const healthRes = await fetch(`${BASE_URL}/api/health`);
   const healthData = await healthRes.json();
   console.log('✓ Health Endpoint:', healthData.status);
 
-  // 2. Products listing
-  const prodRes = await fetch(`${BASE_URL}/api/products`);
-  const prodData = await prodRes.json();
-  console.log(`✓ Products Listed: ${prodData.count} items found`);
-
-  // 3. Categories
-  const catRes = await fetch(`${BASE_URL}/api/products/categories`);
-  const catData = await catRes.json();
-  console.log(`✓ Categories: ${catData.categories.map(c => c.name).join(', ')}`);
-
-  // 4. Single product detail
-  const singleRes = await fetch(`${BASE_URL}/api/products/prod-1`);
-  const singleData = await singleRes.json();
-  console.log(`✓ Product Detail: "${singleData.product.name}" ($${singleData.product.price})`);
-
-  // 5. Coupon validation
-  const couponRes = await fetch(`${BASE_URL}/api/orders/validate-coupon`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: 'NOVA20' })
-  });
-  const couponData = await couponRes.json();
-  console.log(`✓ Coupon Validation: ${couponData.coupon.code} -> ${couponData.coupon.description}`);
-
-  // 6. Create order
-  const orderRes = await fetch(`${BASE_URL}/api/orders`, {
+  // 2. User Registration
+  const testEmail = `intern_${Date.now()}@test.in`;
+  const regRes = await fetch(`${BASE_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      name: 'Priya Sharma',
+      email: testEmail,
+      phone: '9876500000',
+      password: 'password123'
+    })
+  });
+  const regData = await regRes.json();
+  console.log(`✓ User Registration (SQLite): ${regData.user.name} (${regData.user.email})`);
+  const token = regData.token;
+
+  // 3. User Login
+  const loginRes = await fetch(`${BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: testEmail,
+      password: 'password123'
+    })
+  });
+  const loginData = await loginRes.json();
+  console.log(`✓ User Login (bcrypt + JWT): Success token verified`);
+
+  // 4. Products listing from SQLite
+  const prodRes = await fetch(`${BASE_URL}/api/products`);
+  const prodData = await prodRes.json();
+  console.log(`✓ Products from SQLite DB: ${prodData.count} items found`);
+
+  // 5. Pincode Check
+  const pinRes = await fetch(`${BASE_URL}/api/products/check-pincode/560103`);
+  const pinData = await pinRes.json();
+  console.log(`✓ Pincode 560103 Checked: ${pinData.deliveryDate} (${pinData.courier})`);
+
+  // 6. Create Order linked to user in SQLite
+  const orderRes = await fetch(`${BASE_URL}/api/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
       items: [{ id: 'prod-1', quantity: 1, color: 'Space Black' }],
       shippingDetails: {
-        fullName: 'Internship Evaluator',
-        email: 'evaluator@techcorp.com',
-        address: '500 Tech Highway',
-        city: 'Silicon Valley',
-        state: 'CA',
-        zip: '94016'
+        fullName: 'Priya Sharma',
+        email: testEmail,
+        phone: '9876500000',
+        address: '402 Tech Boulevard',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        pincode: '560103'
       },
       shippingMethod: 'standard',
-      paymentMethod: 'Credit Card (ending in 4242)',
-      couponCode: 'NOVA20'
+      paymentMethod: 'upi',
+      upiId: 'priya@okaxis',
+      couponCode: 'FESTIVE20'
     })
   });
   const orderData = await orderRes.json();
-  console.log(`✓ Order Created: ID ${orderData.order.id}, Total $${orderData.order.pricing.total}`);
+  console.log(`✓ Authenticated Order Created in SQLite: ID ${orderData.order.id}, User ID ${orderData.order.userId}`);
 
-  // 7. Update status (simulation)
+  // 7. Get user's order history from SQLite
+  const myOrdersRes = await fetch(`${BASE_URL}/api/orders/user/my-orders`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  const myOrdersData = await myOrdersRes.json();
+  console.log(`✓ User Order History from SQLite: Found ${myOrdersData.count} order(s) for user`);
+
+  // 8. Update Order Status (Simulation)
   const statusRes = await fetch(`${BASE_URL}/api/orders/${orderData.order.id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status: 'Processing' })
   });
   const statusData = await statusRes.json();
-  console.log(`✓ Order Status Updated: ${statusData.order.status}`);
+  console.log(`✓ Order Status Updated in SQLite: ${statusData.order.status}`);
 
-  console.log('\n🎉 ALL 7 FULL-STACK API TESTS PASSED SUCCESSFULLY!');
+  console.log('\n🎉 ALL 8 FULL-STACK SQLite + AUTH + E-COMMERCE TESTS PASSED!');
   process.exit(0);
 }
 

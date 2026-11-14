@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart — NOVA LUXE</title>
+  <title>Shopping Bag — NOVA LUXE India</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,38 +11,32 @@
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <span>🇮🇳 <strong>FESTIVE SPECIAL:</strong> Use coupon <span class="coupon-pill">FESTIVE20</span> for 20% discount on entire cart</span>
+    <span style="opacity: 0.6;">|</span>
+    <span>⚡ FREE Express Delivery across India on orders above ₹999</span>
+  </div>
+
+  <!-- Navbar -->
   <header class="navbar">
     <div class="container nav-container">
       <a href="/index.html" class="brand-logo">
         <div class="logo-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
             <polyline points="2 17 12 22 22 17"></polyline>
             <polyline points="2 12 12 17 22 12"></polyline>
           </svg>
         </div>
-        <span>NOVA<span>LUXE</span></span>
+        <span>NOVA<span>LUXE</span> <span class="country-flag">🇮🇳</span></span>
       </a>
 
-      <nav>
-        <ul class="nav-links">
-          <li><a href="/index.html">Store</a></li>
-          <li><a href="/index.html#products">Products</a></li>
-          <li><a href="/cart.html" class="active">Cart</a></li>
-          <li><a href="/orders.html">Track Order</a></li>
-        </ul>
-      </nav>
-
       <div class="nav-actions">
-        <button class="cart-toggle-btn" aria-label="Open shopping cart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span class="cart-badge" style="display: none;">0</span>
-        </button>
+        <div class="nav-auth-container"></div>
+        <a href="/index.html" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+          Continue Shopping
+        </a>
       </div>
     </div>
   </header>
@@ -50,25 +44,25 @@
   <main style="padding: 3.5rem 0 6rem;">
     <div class="container">
       <div style="margin-bottom: 2rem;">
-        <h1 style="font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;">Shopping Cart</h1>
-        <p style="color: var(--text-secondary); font-size: 0.95rem;">Review your selected hardware and accessories before checking out</p>
+        <h1 style="font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-main);">My Shopping Bag</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">Review your selected tech gear with GST invoice & fast Indian dispatch</p>
       </div>
 
       <!-- Empty State -->
-      <div id="full-cart-empty" style="display: none; text-align: center; padding: 5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl);">
+      <div id="full-cart-empty" style="display: none; text-align: center; padding: 5rem 1rem; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1.5rem; color: var(--text-muted);"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        <h2 style="font-size: 1.5rem; margin-bottom: 0.75rem;">Your Cart is Empty</h2>
-        <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 2rem;">Looks like you haven't added anything to your cart yet. Explore our bestsellers and latest tech devices.</p>
-        <a href="/index.html#products" class="btn-primary">Browse All Products</a>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-main); font-weight: 800;">Your Shopping Bag is Empty</h2>
+        <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 2rem;">Explore our festive bestsellers, headphones, and tablets with easy UPI payments.</p>
+        <a href="/index.html#products" class="btn-primary">Browse Festive Catalog</a>
       </div>
 
       <!-- Non-Empty Grid -->
       <div id="full-cart-grid" class="checkout-grid" style="display: none;">
         <!-- Left: Items Table -->
-        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 2rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
-            <h2 style="font-size: 1.2rem; font-weight: 700;">Cart Items (<span id="cart-item-count-full">0</span>)</h2>
-            <button onclick="Cart.clear(); renderFullCartPage();" style="color: var(--accent-rose); font-size: 0.85rem; font-weight: 600;">Clear All</button>
+        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-card);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light);">
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">Bag Items (<span id="cart-item-count-full">0</span>)</h2>
+            <button onclick="Cart.clear(); renderFullCartPage();" style="color: var(--accent-rose); font-size: 0.85rem; font-weight: 700;">Empty Bag</button>
           </div>
 
           <div id="full-cart-items-list">
@@ -76,51 +70,55 @@
           </div>
 
           <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <a href="/index.html#products" style="color: var(--accent-primary); font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-              Continue Shopping
+            <a href="/index.html#products" style="color: var(--primary); font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+              Add More Items
             </a>
           </div>
         </div>
 
         <!-- Right: Summary Sidebar -->
         <div class="checkout-summary-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Order Summary</h3>
+          <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text-main);">Order Pricing Summary</h3>
 
-          <div class="coupon-input-group">
-            <input type="text" id="full-cart-coupon" class="form-input" placeholder="Promo code (e.g. NOVA20)">
-            <button id="full-cart-coupon-btn" class="btn-secondary" style="padding: 0 1.25rem;">Apply</button>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+            <input type="text" id="full-cart-coupon" class="form-input" placeholder="Coupon Code (e.g. FESTIVE20)" style="flex: 1; text-transform: uppercase;">
+            <button id="full-cart-coupon-btn" class="btn-secondary" style="padding: 0 1.25rem; font-weight: 700;">Apply</button>
           </div>
 
           <div class="cart-summary-line">
-            <span>Subtotal</span>
-            <span id="full-cart-subtotal">$0.00</span>
+            <span>Bag Subtotal</span>
+            <span id="full-cart-subtotal">₹0</span>
           </div>
+
           <div class="cart-summary-line" id="full-cart-discount-row" style="display: none; color: var(--accent-emerald);">
-            <span>Discount</span>
-            <span id="full-cart-discount">-$0.00</span>
+            <span>Festive Coupon Discount</span>
+            <span id="full-cart-discount">-₹0</span>
           </div>
+
           <div class="cart-summary-line">
-            <span>Estimated Shipping</span>
+            <span>Express Shipping (BlueDart)</span>
             <span id="full-cart-shipping">Calculated at checkout</span>
           </div>
+
           <div class="cart-summary-line">
-            <span>Estimated Sales Tax (8%)</span>
-            <span id="full-cart-tax">$0.00</span>
+            <span>Estimated GST (18% Included)</span>
+            <span id="full-cart-tax">₹0</span>
           </div>
+
           <div class="cart-summary-line total-line">
-            <span>Estimated Total</span>
-            <span id="full-cart-total">$0.00</span>
+            <span>Total Payable Amount</span>
+            <span id="full-cart-total" style="color: var(--primary);">₹0</span>
           </div>
 
           <a href="/checkout.html" class="btn-primary" style="width: 100%; justify-content: center; padding: 1rem; margin-top: 1.5rem;">
             Proceed to Checkout
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </a>
 
           <div style="margin-top: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.82rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            256-Bit SSL Encrypted & Protected Checkout
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            100% Safe & Secure Payment with UPI / Cards / COD
           </div>
         </div>
       </div>
@@ -130,13 +128,14 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container footer-bottom" style="border: none; padding-top: 0;">
-      <div>© 2026 NOVA LUXE Technologies Inc.</div>
-      <a href="/index.html" style="color: var(--accent-primary);">← Back to Storefront</a>
+      <div>© 2026 NOVA LUXE Retail India Pvt. Ltd.</div>
+      <a href="/index.html" style="color: #818cf8;">← Back to Storefront</a>
     </div>
   </footer>
 
   <script src="/js/toast.js"></script>
   <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
   <script src="/js/cart.js"></script>
   <script>
     let appliedCoupon = null;
@@ -164,22 +163,22 @@
       document.getElementById('cart-item-count-full').textContent = Cart.getCount();
 
       list.innerHTML = Cart.items.map(item => `
-        <div style="display: flex; gap: 1.25rem; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--border-color);">
-          <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color);">
+        <div style="display: flex; gap: 1.25rem; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--border-light);">
+          <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-light);">
           <div style="flex: 1;">
-            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">${item.name}</h4>
-            <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Color / Variant: ${item.color}</div>
-            <div style="font-weight: 700; color: var(--text-primary); font-size: 1.05rem;">$${item.price.toFixed(2)} each</div>
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-main);">${item.name}</h4>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Variant: ${item.color}</div>
+            <div style="font-weight: 800; color: var(--text-main); font-size: 1.05rem;">${formatINR(item.price)} each</div>
           </div>
           <div class="qty-control">
             <button class="qty-btn" onclick="Cart.updateQty('${item.id}', '${item.color}', -1)">−</button>
             <span class="qty-num">${item.quantity}</span>
             <button class="qty-btn" onclick="Cart.updateQty('${item.id}', '${item.color}', 1)">+</button>
           </div>
-          <div style="font-size: 1.15rem; font-weight: 800; min-width: 90px; text-align: right;">
-            $${(item.price * item.quantity).toFixed(2)}
+          <div style="font-size: 1.2rem; font-weight: 800; min-width: 100px; text-align: right; color: var(--text-main);">
+            ${formatINR(item.price * item.quantity)}
           </div>
-          <button onclick="Cart.removeItem('${item.id}', '${item.color}')" style="color: var(--text-muted); padding: 0.5rem; transition: color 0.2s;" title="Remove">
+          <button onclick="Cart.removeItem('${item.id}', '${item.color}')" style="color: var(--text-muted); padding: 0.5rem; cursor: pointer;" title="Remove">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
@@ -187,24 +186,29 @@
 
       const subtotal = Cart.getSubtotal();
       let discount = 0;
-      if (appliedCoupon && appliedCoupon.discountPercent) {
-        discount = (subtotal * appliedCoupon.discountPercent) / 100;
+      if (appliedCoupon) {
+        if (appliedCoupon.discountPercent) {
+          discount = Math.round((subtotal * appliedCoupon.discountPercent) / 100);
+        } else if (appliedCoupon.flatAmount) {
+          discount = Math.min(subtotal, appliedCoupon.flatAmount);
+        }
       }
-      const tax = Math.round((subtotal - discount) * 0.08 * 100) / 100;
-      const total = Math.max(0, subtotal - discount + tax);
+      
+      const tax = Math.round((subtotal - discount) * 0.18);
+      const total = Math.max(0, subtotal - discount);
 
-      document.getElementById('full-cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('full-cart-subtotal').textContent = formatINR(subtotal);
       
       const discountRow = document.getElementById('full-cart-discount-row');
       if (discount > 0) {
         discountRow.style.display = 'flex';
-        document.getElementById('full-cart-discount').textContent = `-$${discount.toFixed(2)}`;
+        document.getElementById('full-cart-discount').textContent = `-${formatINR(discount)}`;
       } else {
         discountRow.style.display = 'none';
       }
 
-      document.getElementById('full-cart-tax').textContent = `$${tax.toFixed(2)}`;
-      document.getElementById('full-cart-total').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('full-cart-tax').textContent = formatINR(tax);
+      document.getElementById('full-cart-total').textContent = formatINR(total);
     }
 
     function setupCoupon() {
@@ -216,16 +220,16 @@
         const code = input.value.trim().toUpperCase();
         if (!code) return;
         try {
-          const res = await API.validateCoupon(code);
+          const res = await API.validateCoupon(code, Cart.getSubtotal());
           if (res.success && res.coupon) {
             appliedCoupon = res.coupon;
             Toast.success(`Coupon ${code} applied: ${res.coupon.description}!`);
             renderFullCartPage();
           } else {
-            Toast.error('Invalid promo code');
+            Toast.error(res.error || 'Invalid promo code');
           }
         } catch {
-          Toast.error('Coupon check failed');
+          Toast.error('Coupon validation failed');
         }
       };
     }

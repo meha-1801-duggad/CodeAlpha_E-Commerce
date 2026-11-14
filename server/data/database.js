@@ -1,20 +1,57 @@
-const fs = require('fs').promises;
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const bcrypt = require('bcryptjs');
 
-const PRODUCTS_FILE = path.join(__dirname, 'products.json');
-const ORDERS_FILE = path.join(__dirname, 'orders.json');
+const DB_PATH = path.join(__dirname, 'ecommerce.sqlite');
 
+const db = new sqlite3.Database(DB_PATH, (err) => {
+  if (err) {
+    console.error('Failed to connect to SQLite database:', err);
+  } else {
+    console.log('Connected to SQLite database at:', DB_PATH);
+  }
+});
+
+// Wrap SQLite methods in Promises
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve(this);
+    });
+  });
+}
+
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+}
+
+function all(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
+
+// Initial Product Catalog for Seeding
 const INITIAL_PRODUCTS = [
   {
     id: "prod-1",
     name: "Aura SoundLink Pro Wireless Headphones",
-    tagline: "Studio-grade spatial audio with hybrid active noise cancellation.",
-    price: 249.99,
-    originalPrice: 299.99,
+    tagline: "Studio-grade spatial audio with hybrid active noise cancellation (ANC 42dB).",
+    price: 14999,
+    originalPrice: 19999,
     category: "Audio",
     badge: "Bestseller",
     rating: 4.9,
-    reviewsCount: 342,
+    reviewsCount: 1420,
     stock: 18,
     images: [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80",
@@ -22,360 +59,597 @@ const INITIAL_PRODUCTS = [
       "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80"
     ],
     colors: ["Space Black", "Silver Gray", "Midnight Navy"],
-    description: "Designed for audiophiles and remote professionals alike, Aura SoundLink Pro delivers ultra-low distortion, deep dynamic bass, and 40-hour battery life with rapid USB-C fast charging.",
+    description: "Designed for audiophiles and working professionals. Aura SoundLink Pro features 40mm bio-cellulose dynamic drivers, LDAC high-res audio codec, and ultra-fast Type-C charging delivering 4 hours of music in just 10 minutes.",
     features: [
-      "Adaptive Hybrid Active Noise Cancelling (up to 42dB)",
-      "40mm High-Resolution Carbon Bio-Cellulose Drivers",
-      "40-Hour Playtime with 10-Min Fast Fuel = 4 Hours",
-      "Multipoint Bluetooth 5.3 connection to two devices simultaneously"
+      "Hybrid Active Noise Cancellation (ANC up to 42dB)",
+      "Hi-Res Wireless Audio certified with LDAC & AAC codecs",
+      "Massive 50-Hour Playtime (35 hours with ANC enabled)",
+      "Multipoint Dual Bluetooth 5.3 pairing with seamless device handover"
     ],
     specs: {
-      "Battery Life": "Up to 40 Hours",
-      "Weight": "254 grams",
-      "Connectivity": "Bluetooth 5.3 & 3.5mm Aux",
-      "Water Resistance": "IPX4 Splashproof",
-      "Warranty": "2 Years International"
+      "Battery Life": "Up to 50 Hours (Type-C Quick Fuel)",
+      "Weight": "250 grams",
+      "Bluetooth": "v5.3 Multipoint (15m range)",
+      "Water Resistance": "IPX4 Splash & Sweat Proof",
+      "Warranty": "1 Year Brand Replacement Warranty"
     }
   },
   {
     id: "prod-2",
-    name: "Chronos Apex Smartwatch Ultra",
-    tagline: "Aerospace titanium casing with AMOLED sapphire crystal display.",
-    price: 329.00,
-    originalPrice: 389.00,
+    name: "Chronos Apex Ultra Smartwatch",
+    tagline: "Aerospace titanium bezel with 1.43\" AMOLED sapphire crystal display.",
+    price: 18499,
+    originalPrice: 24999,
     category: "Wearables",
-    badge: "Featured",
+    badge: "Deal of the Day",
     rating: 4.8,
-    reviewsCount: 189,
-    stock: 12,
+    reviewsCount: 890,
+    stock: 8,
     images: [
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Titanium Gray", "Starlight", "Obsidian Black"],
-    description: "Engineered for endurance athletes and daily lifestyle trackers. Chronos Apex features dual-frequency GPS, heart-rate variability ECG sensors, and a battery that lasts 14 days on a single charge.",
+    colors: ["Titanium Gray", "Starlight Gold", "Obsidian Black"],
+    description: "Engineered for fitness enthusiasts and urban explorers. Features dual-frequency GNSS positioning, 100+ sports modes, Bluetooth calling with AI noise reduction, and a battery that runs 12 days on a single charge.",
     features: [
-      "1.43-inch Always-on Sapphire Crystal AMOLED Display",
-      "Medical-Grade ECG & Continuous SpO2 Blood Oxygen Monitoring",
-      "5 ATM & IP68 Water Resistance (Swim Proof up to 50m)",
-      "Offline Vector Maps with turn-by-turn haptic navigation"
+      "1.43\" Ultra AMOLED Display with 1000 nits peak brightness",
+      "Medical-grade Optical PPG sensor for 24/7 Heart Rate & SpO2",
+      "5 ATM & IP68 Swim-proof construction",
+      "Built-in Microphone and Speaker for crisp Bluetooth phone calls"
     ],
     specs: {
-      "Battery Life": "Up to 14 Days",
-      "Case Material": "Grade 5 Titanium & Ceramic",
-      "Compatibility": "iOS & Android",
-      "Weight": "48 grams",
-      "Warranty": "2 Years Official"
+      "Battery Life": "12 Days typical use, 5 days heavy use",
+      "Display": "1.43\" AMOLED, 466x466 px",
+      "Sensors": "Optical Heart Rate, SpO2, Barometer, Gyroscope",
+      "Compatibility": "Android 8.0+ / iOS 12.0+",
+      "Warranty": "1 Year Official Warranty"
     }
   },
   {
     id: "prod-3",
-    name: "Lumino Studio Smart Light Bar",
-    tagline: "Minimalist monitor lamp with back ambient RGB lighting.",
-    price: 89.99,
-    originalPrice: 119.99,
+    name: "Lumino Studio Smart Monitor Light Bar",
+    tagline: "Minimalist desktop lamp with back ambient RGB and wireless controller puck.",
+    price: 3499,
+    originalPrice: 4999,
     category: "Smart Home",
-    badge: "Popular",
+    badge: "Trending",
     rating: 4.7,
-    reviewsCount: 220,
-    stock: 35,
+    reviewsCount: 620,
+    stock: 25,
     images: [
       "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Matte Black", "Brushed Aluminum"],
-    description: "Protect your eyes and elevate your desktop workspace aesthetics with asymmetrical optical light projection that illuminates your desk with zero screen glare.",
+    colors: ["Matte Black", "Space Gray"],
+    description: "Protect your eyesight during intense work or gaming sessions. Features patented asymmetric forward optical projection that illuminates your workspace with zero screen glare and zero reflections.",
     features: [
-      "Zero Screen Glare Asymmetric Optical Design",
-      "Wireless Rotary Desktop Dial Controller",
-      "Full Spectrum RGB Backlight Ambient Sync",
-      "Stepless Color Temperature Adjustment (2700K - 6500K)"
+      "Asymmetric Optical Design guarantees 0% screen glare",
+      "Wireless 2.4GHz Desktop Rotary Dial Controller",
+      "Full Spectrum RGB Backlight with dynamic music sync",
+      "Stepless Color Temperature tuning (2700K Warm - 6500K Cool)"
     ],
     specs: {
-      "Input Power": "5V 2A USB-C",
-      "Color Rendering": "Ra > 97",
-      "Mounting": "Fits Flat & Curved Monitors 5-45mm",
-      "Weight": "420 grams",
-      "Warranty": "1 Year Replacement"
+      "Power Input": "5V 2A USB-C (powered directly from PC/Monitor)",
+      "Color Rendering": "Ra > 97 Ultra-High CRI",
+      "Mounting": "Fits Flat & Curved Monitors (5mm to 45mm thickness)",
+      "Warranty": "1 Year Replacement Warranty"
     }
   },
   {
     id: "prod-4",
-    name: "KeyCraft Mechanical Pro Keyboard",
-    tagline: "Hot-swappable custom tactile keyboard with walnut wood wrist rest.",
-    price: 159.00,
-    originalPrice: 189.00,
+    name: "KeyCraft Mechanical Pro RGB Keyboard",
+    tagline: "Hot-swappable gasket-mounted mechanical keyboard with CNC volume knob.",
+    price: 7999,
+    originalPrice: 11499,
     category: "Computing",
     badge: "Hot Deal",
     rating: 4.9,
-    reviewsCount: 410,
-    stock: 9,
+    reviewsCount: 1150,
+    stock: 6,
     images: [
       "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Retro Beige", "Cyberpunk Neon", "Midnight Slate"],
-    description: "The gold standard typing experience. Packed with pre-lubricated Gateron Pro switches, sound-dampening silicone foam layers, and PBT double-shot keycaps that resist finger shine.",
+    colors: ["Cyberpunk Neon", "Retro Cream", "Carbon Stealth"],
+    description: "The dream typing experience for coders and writers. Pre-lubed custom tactile switches cushioned by 5 layers of sound-absorbing foam produce a satisfying deep 'thock' sound on every keystroke.",
     features: [
-      "75% Compact Layout with CNC Aluminum Volume Knob",
-      "Hot-Swappable 5-pin PCB Supports MX Switches",
-      "Tri-Mode Connectivity: 2.4Ghz Wireless, Bluetooth 5.1 & Type-C",
-      "Gasket Mounted Design with 3-Layer Acoustic Dampening"
+      "75% Compact 82-Key Layout with Multi-function Metal Knob",
+      "Hot-Swappable 5-pin PCB supports Cherry, Gateron, and Kailh switches",
+      "Tri-Mode Connectivity: 2.4GHz Wireless, Bluetooth 5.1 & Type-C Detachable",
+      "Premium PBT Dye-Sub Keycaps that never fade or get shiny"
     ],
     specs: {
-      "Switch Type": "Gateron Brown Tactile (Pre-lubed)",
-      "Battery": "4000mAh Rechargeable (200 hrs RGB off)",
-      "Keycaps": "Dye-Sub PBT Cherry Profile",
-      "Weight": "980 grams",
-      "Warranty": "2 Years"
+      "Switch Type": "Gateron Pro Yellow / Brown (Factory Pre-lubed)",
+      "Battery": "4000mAh Lithium-ion (Up to 200 hours backlight off)",
+      "Backlight": "Per-Key RGB with 22 lighting presets",
+      "Warranty": "2 Years Official Warranty"
     }
   },
   {
     id: "prod-5",
     name: "NovaBeam 4K HDR Home Cinema Projector",
-    tagline: "Compact smart laser projector with auto-focus and Dolby Audio.",
-    price: 649.00,
-    originalPrice: 799.00,
+    tagline: "Ultra-bright 2500 ANSI Lumens smart laser projector with Harman Kardon sound.",
+    price: 49999,
+    originalPrice: 69999,
     category: "Smart Home",
-    badge: "Sale",
+    badge: "Mega Deal",
     rating: 4.8,
-    reviewsCount: 95,
-    stock: 7,
+    reviewsCount: 340,
+    stock: 5,
     images: [
       "https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Lunar White", "Space Gray"],
-    description: "Turn any room into a true cinema. Featuring 2200 ANSI Lumens, instant AI auto-keystone correction, integrated Netflix/Google TV, and rich Harman Kardon tuned speakers.",
+    colors: ["Lunar White", "Cosmic Gray"],
+    description: "Turn your living room into an IMAX theater. Features true 4K HDR projection, instant AI auto-focus and auto-keystone correction, Google TV with certified Netflix, and dual 12W Harman Kardon speakers.",
     features: [
-      "Native 4K UHD Resolution with HDR10+ Decoding",
-      "2200 ANSI Lumens Super Bright ALPD Laser Engine",
-      "Auto Focus, Obstacle Avoidance & Screen Fit in 1 Second",
-      "Dual 12W Harman Kardon Built-in Speakers"
+      "True 4K UHD Resolution with HDR10+ and MEMC motion smoothing",
+      "2500 ANSI Lumens ALPD 4.0 Laser Engine for vivid daytime viewing",
+      "1-Second AI Auto Keystone Correction and Obstacle Avoidance",
+      "Licensed Android TV 11 with built-in Chromecast & Google Assistant"
     ],
     specs: {
-      "Projection Size": "40 to 200 inches",
-      "Light Source Life": "25,000+ Hours",
-      "OS": "Google TV with Chromecast built-in",
-      "Weight": "2.1 kg",
-      "Warranty": "2 Years International"
+      "Screen Size": "40 to 200 inches diagonal",
+      "Audio": "2x 12W Harman Kardon tuned with Dolby Audio & DTS-HD",
+      "Lamp Life": "30,000+ Hours (Equivalent to 10+ years)",
+      "Warranty": "2 Years Comprehensive Brand Warranty"
     }
   },
   {
     id: "prod-6",
-    name: "OmniDesk Ergonomic Wireless Mouse",
-    tagline: "Precision 8K sensor with horizontal thumb scroll wheel.",
-    price: 79.50,
-    originalPrice: 99.00,
+    name: "OmniDesk Ergonomic Wireless Precision Mouse",
+    tagline: "Sculpted thumb rest, 8000 DPI sensor on glass, and MagSpeed electromagnetic scroll.",
+    price: 4299,
+    originalPrice: 5999,
     category: "Computing",
     badge: "Bestseller",
-    rating: 4.6,
-    reviewsCount: 312,
-    stock: 24,
+    rating: 4.7,
+    reviewsCount: 880,
+    stock: 22,
     images: [
       "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Graphite", "Pale Gray", "Rose"],
-    description: "Sculpted for maximum palm support to eliminate wrist fatigue during long work sessions. Features quiet electromagnetic MagSpeed scrolling and ultra-precise glass tracking.",
+    colors: ["Graphite Black", "Pale Gray", "Rose Gold"],
+    description: "The gold standard mouse for productivity. Sculpted specifically to support your hand and wrist natural angle. Scroll 1,000 lines in a single second with silent magnetic MagSpeed scrolling.",
     features: [
-      "8000 DPI Darkfield Sensor tracks on glass surfaces",
-      "MagSpeed Electromagnetic Scrolling (1000 lines/sec)",
-      "Secondary Thumb Wheel for horizontal sheet navigation",
-      "Easy-Switch pair up to 3 computers with Flow copy-paste"
+      "8000 DPI Darkfield high-precision sensor tracks even on glass tables",
+      "Dual Horizontal & Vertical Thumb Scroll Wheels",
+      "Whisper-Quiet Click switches reduce click noise by 90%",
+      "Easy-Switch connects up to 3 computers with clipboard file transfer"
     ],
     specs: {
-      "Battery Life": "70 Days on full charge (Type-C)",
-      "Sensor": "Darkfield High Precision 200-8000 DPI",
-      "Buttons": "7 Customizable macro buttons",
+      "Battery Life": "Up to 70 days on full charge, 1-min charge = 3 hours use",
+      "Connectivity": "Logi Bolt USB Receiver & Bluetooth Low Energy",
       "Weight": "141 grams",
-      "Warranty": "2 Years"
+      "Warranty": "2 Years Replacement Warranty"
     }
   },
   {
     id: "prod-7",
-    name: "PulsePods Sport Earbuds with ANC",
-    tagline: "Secure ear-fin design with sweat resistance and immersive bass.",
-    price: 119.00,
-    originalPrice: 149.00,
+    name: "PulsePods Pro Sport ANC Earbuds",
+    tagline: "Wingtip lock fit, IPX7 sweat-proof, and immersive bass with 36-hour playback.",
+    price: 3999,
+    originalPrice: 6499,
     category: "Audio",
-    badge: "New",
-    rating: 4.7,
-    reviewsCount: 145,
-    stock: 22,
+    badge: "Top Rated",
+    rating: 4.8,
+    reviewsCount: 740,
+    stock: 14,
     images: [
       "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Volt Green", "Jet Black", "Glacier White"],
-    description: "Engineered to stay put through sprints, HIIT workouts, and rainy commutes. IPX7 waterproof rating with wingtips that lock comfortably into your ear contour.",
+    colors: ["Volt Neon", "Jet Black", "Glacier White"],
+    description: "Crafted for intense workouts, running, and heavy rain. Featuring flexible silicone ear hooks that lock securely, active noise cancellation, and punchy bass tuned for workout motivation.",
     features: [
-      "IPX7 Sweat & Waterproof with Hydro-Shield Coating",
-      "32 Hours Total Playtime with Wireless Charging Case",
-      "Active Noise Cancellation + Ambient Transparency Mode",
-      "6-Mic Beamforming Clear Voice Call Technology"
+      "IPX7 Waterproof rating with SweatShield nanocoating",
+      "Active Noise Cancellation with Transparency Mode for road safety",
+      "36 Hours total battery with Qi wireless fast charging case",
+      "Quad-Mic ENC technology for crystal clear phone calls"
     ],
     specs: {
-      "Battery": "8 Hours (Buds) + 24 Hours (Case)",
-      "Waterproofing": "IPX7 Certified",
-      "Bluetooth": "5.3 with AAC / SBC Codecs",
-      "Weight": "5.4g per earbud",
-      "Warranty": "1 Year"
+      "Driver": "11mm Titanium Dynamic Driver",
+      "Playtime": "8 Hours (Earbuds) + 28 Hours (Charging Case)",
+      "Bluetooth": "v5.3 with Gaming Low Latency Mode (45ms)",
+      "Warranty": "1 Year Brand Warranty"
     }
   },
   {
     id: "prod-8",
-    name: "Veloce Minimalist Leather Tech Folio",
-    tagline: "Full-grain Italian leather organizer for 14-inch laptops and cables.",
-    price: 129.00,
-    originalPrice: 160.00,
+    name: "Veloce Handcrafted Leather Tech Organizer Folio",
+    tagline: "Full-grain genuine leather organizer for 14\" laptops, iPads, chargers & cables.",
+    price: 2799,
+    originalPrice: 3999,
     category: "Accessories",
     badge: "Handcrafted",
     rating: 4.9,
-    reviewsCount: 88,
-    stock: 14,
+    reviewsCount: 310,
+    stock: 15,
     images: [
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1000&q=80"
     ],
-    colors: ["Cognac Brown", "Espresso Black", "Hunter Green"],
-    description: "Keep your daily tech essentials impeccably organized. Crafted with vegetable-tanned Italian leather that develops a rich, personal patina over time.",
+    colors: ["Cognac Tan", "Espresso Brown", "Midnight Black"],
+    description: "Handcrafted by master leather artisans. Keeps your laptop, tablet, passport, AirPods, power bank, and cables neatly organized in one slim, luxurious travel companion.",
     features: [
-      "Velvet-lined laptop sleeve fits up to 14.2\" laptops & tablets",
-      "Magnetic cable management loops and stylus slot",
-      "RFID-shielded internal passport and card slots",
-      "YKK Excella smooth Japanese metal zippers"
+      "Padded velvet sleeve accommodates laptops and tablets up to 14.2 inches",
+      "Elastic organizer loops for stylus, Apple Pencil, and cable cords",
+      "RFID-shielded security pockets for credit cards and passport",
+      "Premium Japanese YKK metal zippers that glide effortlessly"
     ],
     specs: {
-      "Material": "100% Full-grain Tuscan Leather",
-      "Dimensions": "35cm x 25cm x 3cm",
-      "Weight": "490 grams",
+      "Material": "100% Genuine Full-Grain Vegetable Tanned Leather",
+      "Dimensions": "35 cm x 25 cm x 3 cm",
+      "Weight": "480 grams",
       "Warranty": "Lifetime Craftsmanship Guarantee"
+    }
+  },
+  {
+    id: "prod-9",
+    name: "AeroCharge 65W GaN Fast Charger Trio",
+    tagline: "Ultra-compact Gallium Nitride wall charger with 2x Type-C + 1x USB-A ports.",
+    price: 1999,
+    originalPrice: 2999,
+    category: "Accessories",
+    badge: "Must Have",
+    rating: 4.8,
+    reviewsCount: 520,
+    stock: 40,
+    images: [
+      "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1609592424368-80dfa5697693?auto=format&fit=crop&w=1000&q=80"
+    ],
+    colors: ["Glossy White", "Stealth Black"],
+    description: "Charge your laptop, smartphone, and smartwatch simultaneously from a single pocket-sized adapter. Powered by advanced GaN III semiconductor technology that runs cooler and charges 3x faster.",
+    features: [
+      "65W Power Delivery charges MacBook Air to 100% in 1.5 hours",
+      "Intelligent power distribution across 3 fast-charging ports",
+      "50% smaller than standard manufacturer OEM brick chargers",
+      "Over-voltage, surge, and thermal temperature guard protection"
+    ],
+    specs: {
+      "Output": "65W Max (PD 3.0, QC 4.0+, PPS Support)",
+      "Ports": "2x USB-C + 1x USB-A",
+      "Plug Type": "Indian Standard 2-Pin Plug (BIS Certified)",
+      "Warranty": "18 Months Replacement Warranty"
+    }
+  },
+  {
+    id: "prod-10",
+    name: "OnePlus Pad Go 11.35\" 2.4K Display Tablet",
+    tagline: "Eye-care 2.4K 90Hz display with Dolby Atmos quad-speakers and 8000mAh battery.",
+    price: 17999,
+    originalPrice: 21999,
+    category: "Computing",
+    badge: "Festive Pick",
+    rating: 4.7,
+    reviewsCount: 960,
+    stock: 11,
+    images: [
+      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1561154464-82e9adf32764?auto=format&fit=crop&w=1000&q=80"
+    ],
+    colors: ["Twin Mint Green", "Graphite Gray"],
+    description: "The ultimate entertainment and study tablet. Boasting an expansive 11.35\" 7:5 ratio screen, Low Blue Light TÜV Rheinland certification, and Omnibearing quad speakers with Dolby Atmos sound.",
+    features: [
+      "11.35-inch 2.4K ReadFit Display with 90Hz refresh rate",
+      "Quad Stereo Speakers tuned with Dolby Atmos audio",
+      "8000mAh Battery with 33W SUPERVOOC Fast Charging",
+      "8GB RAM + 128GB Storage expandable up to 1TB via microSD"
+    ],
+    specs: {
+      "Processor": "MediaTek Helio G99 Octa-core",
+      "Display": "11.35\" 2.4K (2408 x 1720) 260 PPI",
+      "Battery": "8000mAh with 33W Fast Charger included in box",
+      "Weight": "532 grams",
+      "Warranty": "1 Year Manufacturer Brand Warranty"
     }
   }
 ];
 
-const INITIAL_ORDERS = [
-  {
-    id: "ORD-94812",
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    status: "Delivered",
-    items: [
-      {
-        id: "prod-1",
-        name: "Aura SoundLink Pro Wireless Headphones",
-        price: 249.99,
-        quantity: 1,
-        color: "Space Black",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"
-      }
-    ],
-    shippingDetails: {
-      fullName: "Alex Morgan",
-      email: "alex.morgan@example.com",
-      phone: "+1 (555) 349-2810",
-      address: "742 Evergreen Terrace",
-      city: "Springfield",
-      state: "OR",
-      zip: "97477",
-      country: "United States"
-    },
-    shippingMethod: "Express Shipping ($12.00)",
-    paymentMethod: "Credit Card (ending in 4242)",
-    pricing: {
-      subtotal: 249.99,
-      shipping: 12.00,
-      tax: 20.00,
-      discount: 25.00,
-      total: 256.99
-    },
-    tracking: [
-      { status: "Order Placed", time: "2 days ago", done: true },
-      { status: "Processing & Quality Check", time: "2 days ago", done: true },
-      { status: "Shipped with FedEx Express", time: "Yesterday", done: true },
-      { status: "Delivered to Front Door", time: "Today at 10:15 AM", done: true }
-    ]
-  }
-];
-
 const VALID_COUPONS = {
-  "NOVA20": { code: "NOVA20", discountPercent: 20, description: "20% Off Storewide" },
-  "WELCOME10": { code: "WELCOME10", discountPercent: 10, description: "10% Welcome Discount" },
-  "FREESHIP": { code: "FREESHIP", freeShipping: true, description: "Free Express Shipping" }
+  "FESTIVE20": { code: "FESTIVE20", discountPercent: 20, description: "20% Festive Clearance Discount" },
+  "INDIA10": { code: "INDIA10", discountPercent: 10, description: "10% Instant Storewide Discount" },
+  "FLAT500": { code: "FLAT500", flatAmount: 500, minOrder: 2000, description: "Flat ₹500 Off on orders above ₹2,000" },
+  "FREESHIP": { code: "FREESHIP", freeShipping: true, description: "Free Express Shipping across India" }
 };
 
-// Database helper functions
+// Initialize SQLite Database Schema
 async function initDatabase() {
-  try {
-    await fs.access(PRODUCTS_FILE);
-  } catch {
-    await fs.writeFile(PRODUCTS_FILE, JSON.stringify(INITIAL_PRODUCTS, null, 2), 'utf8');
+  // 1. Create Users Table
+  await run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      phone TEXT,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // 2. Create Products Table
+  await run(`
+    CREATE TABLE IF NOT EXISTS products (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      tagline TEXT,
+      price REAL NOT NULL,
+      original_price REAL,
+      category TEXT NOT NULL,
+      badge TEXT,
+      rating REAL DEFAULT 5.0,
+      reviews_count INTEGER DEFAULT 0,
+      stock INTEGER DEFAULT 10,
+      images TEXT,
+      colors TEXT,
+      description TEXT,
+      features TEXT,
+      specs TEXT
+    )
+  `);
+
+  // 3. Create Orders Table
+  await run(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      status TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      items TEXT NOT NULL,
+      shipping_details TEXT NOT NULL,
+      shipping_method TEXT NOT NULL,
+      payment_method TEXT NOT NULL,
+      coupon_code TEXT,
+      pricing TEXT NOT NULL,
+      tracking TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  // Seed Products if table is empty
+  const prodCount = await get(`SELECT COUNT(*) as count FROM products`);
+  if (prodCount.count === 0) {
+    console.log('Seeding products into SQLite database...');
+    for (const p of INITIAL_PRODUCTS) {
+      await run(`
+        INSERT INTO products (id, name, tagline, price, original_price, category, badge, rating, reviews_count, stock, images, colors, description, features, specs)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        p.id,
+        p.name,
+        p.tagline,
+        p.price,
+        p.originalPrice || null,
+        p.category,
+        p.badge || null,
+        p.rating,
+        p.reviewsCount,
+        p.stock,
+        JSON.stringify(p.images),
+        JSON.stringify(p.colors || []),
+        p.description,
+        JSON.stringify(p.features || []),
+        JSON.stringify(p.specs || {})
+      ]);
+    }
+    console.log(`Seeded ${INITIAL_PRODUCTS.length} products into SQLite!`);
   }
 
-  try {
-    await fs.access(ORDERS_FILE);
-  } catch {
-    await fs.writeFile(ORDERS_FILE, JSON.stringify(INITIAL_ORDERS, null, 2), 'utf8');
+  // Seed Demo User if not exists
+  const demoUser = await get(`SELECT id FROM users WHERE email = ?`, ['demo@novaluxe.in']);
+  if (!demoUser) {
+    const hashedPassword = await bcrypt.hash('password123', 10);
+    await run(`
+      INSERT INTO users (id, name, email, phone, password)
+      VALUES (?, ?, ?, ?, ?)
+    `, [
+      'usr-demo-1',
+      'Rahul Sharma',
+      'demo@novaluxe.in',
+      '9876543210',
+      hashedPassword
+    ]);
+    console.log('Created default demo user: demo@novaluxe.in / password123');
   }
+
+  // Seed initial sample order if orders table is empty
+  const orderCount = await get(`SELECT COUNT(*) as count FROM orders`);
+  if (orderCount.count === 0) {
+    const sampleOrder = {
+      id: "ORD-IN-84912",
+      userId: "usr-demo-1",
+      createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+      status: "Delivered",
+      items: [
+        {
+          id: "prod-1",
+          name: "Aura SoundLink Pro Wireless Headphones",
+          price: 14999,
+          quantity: 1,
+          color: "Space Black",
+          image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"
+        }
+      ],
+      shippingDetails: {
+        fullName: "Rahul Sharma",
+        email: "demo@novaluxe.in",
+        phone: "9876543210",
+        address: "Flat 402, Green Glen Layout, Bellandur",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pincode: "560103",
+        country: "India"
+      },
+      shippingMethod: "Express BlueDart Delivery (FREE)",
+      paymentMethod: "UPI (Google Pay - rahul@okaxis)",
+      pricing: {
+        currency: "INR",
+        subtotal: 14999,
+        shipping: 0,
+        discount: 1500,
+        cgst: 1215,
+        sgst: 1215,
+        totalGst: 2430,
+        total: 15929
+      },
+      tracking: [
+        { status: "Order Placed", time: "2 days ago", done: true },
+        { status: "Processing", time: "2 days ago", done: true },
+        { status: "Shipped", time: "Yesterday", done: true },
+        { status: "Delivered", time: "Today at 11:30 AM", done: true }
+      ]
+    };
+
+    await run(`
+      INSERT INTO orders (id, user_id, status, created_at, items, shipping_details, shipping_method, payment_method, coupon_code, pricing, tracking)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      sampleOrder.id,
+      sampleOrder.userId,
+      sampleOrder.status,
+      sampleOrder.createdAt,
+      JSON.stringify(sampleOrder.items),
+      JSON.stringify(sampleOrder.shippingDetails),
+      sampleOrder.shippingMethod,
+      sampleOrder.paymentMethod,
+      'FESTIVE20',
+      JSON.stringify(sampleOrder.pricing),
+      JSON.stringify(sampleOrder.tracking)
+    ]);
+  }
+}
+
+// User Database Helpers
+async function createUser({ name, email, phone, password }) {
+  const id = `usr-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await run(`
+    INSERT INTO users (id, name, email, phone, password)
+    VALUES (?, ?, ?, ?, ?)
+  `, [id, name, email.toLowerCase().trim(), phone || '', hashedPassword]);
+  return { id, name, email: email.toLowerCase().trim(), phone };
+}
+
+async function findUserByEmail(email) {
+  if (!email) return null;
+  return await get(`SELECT * FROM users WHERE email = ?`, [email.toLowerCase().trim()]);
+}
+
+async function findUserById(id) {
+  return await get(`SELECT id, name, email, phone, created_at FROM users WHERE id = ?`, [id]);
+}
+
+// Product Database Helpers
+function formatProductRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    name: row.name,
+    tagline: row.tagline,
+    price: row.price,
+    originalPrice: row.original_price,
+    category: row.category,
+    badge: row.badge,
+    rating: row.rating,
+    reviewsCount: row.reviews_count,
+    stock: row.stock,
+    images: JSON.parse(row.images || '[]'),
+    colors: JSON.parse(row.colors || '[]'),
+    description: row.description,
+    features: JSON.parse(row.features || '[]'),
+    specs: JSON.parse(row.specs || '{}')
+  };
 }
 
 async function getProducts() {
-  try {
-    const data = await fs.readFile(PRODUCTS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch {
-    return INITIAL_PRODUCTS;
-  }
+  const rows = await all(`SELECT * FROM products`);
+  return rows.map(formatProductRow);
 }
 
 async function getProductById(id) {
-  const products = await getProducts();
-  return products.find(p => p.id === id);
+  const row = await get(`SELECT * FROM products WHERE id = ?`, [id]);
+  return formatProductRow(row);
+}
+
+// Order Database Helpers
+function formatOrderRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    userId: row.user_id,
+    status: row.status,
+    createdAt: row.created_at,
+    items: JSON.parse(row.items || '[]'),
+    shippingDetails: JSON.parse(row.shipping_details || '{}'),
+    shippingMethod: row.shipping_method,
+    paymentMethod: row.payment_method,
+    couponCode: row.coupon_code,
+    pricing: JSON.parse(row.pricing || '{}'),
+    tracking: JSON.parse(row.tracking || '[]')
+  };
 }
 
 async function getOrders() {
-  try {
-    const data = await fs.readFile(ORDERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch {
-    return INITIAL_ORDERS;
-  }
+  const rows = await all(`SELECT * FROM orders ORDER BY created_at DESC`);
+  return rows.map(formatOrderRow);
 }
 
 async function getOrderById(id) {
-  const orders = await getOrders();
-  return orders.find(o => o.id.toUpperCase() === id.toUpperCase());
+  const row = await get(`SELECT * FROM orders WHERE id = ?`, [id.toUpperCase()]);
+  return formatOrderRow(row);
+}
+
+async function getOrdersByUserId(userId) {
+  const rows = await all(`SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`, [userId]);
+  return rows.map(formatOrderRow);
 }
 
 async function createOrder(orderData) {
-  const orders = await getOrders();
-  orders.unshift(orderData);
-  await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
+  await run(`
+    INSERT INTO orders (id, user_id, status, created_at, items, shipping_details, shipping_method, payment_method, coupon_code, pricing, tracking)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `, [
+    orderData.id,
+    orderData.userId || null,
+    orderData.status,
+    orderData.createdAt || new Date().toISOString(),
+    JSON.stringify(orderData.items),
+    JSON.stringify(orderData.shippingDetails),
+    orderData.shippingMethod,
+    orderData.paymentMethod,
+    orderData.couponCode || null,
+    JSON.stringify(orderData.pricing),
+    JSON.stringify(orderData.tracking)
+  ]);
   return orderData;
 }
 
 async function updateOrderStatus(orderId, nextStatus) {
-  const orders = await getOrders();
-  const order = orders.find(o => o.id.toUpperCase() === orderId.toUpperCase());
+  const order = await getOrderById(orderId);
   if (!order) return null;
 
-  order.status = nextStatus;
-  
-  // Update tracking entry
   const statusLabels = ["Order Placed", "Processing", "Shipped", "Delivered"];
   const targetIndex = statusLabels.indexOf(nextStatus);
 
+  let newTracking = order.tracking;
   if (targetIndex !== -1) {
-    order.tracking = statusLabels.map((label, idx) => ({
+    newTracking = statusLabels.map((label, idx) => ({
       status: label,
       time: idx <= targetIndex ? "Completed recently" : "Pending",
       done: idx <= targetIndex
     }));
   }
 
-  await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
-  return order;
+  await run(`
+    UPDATE orders 
+    SET status = ?, tracking = ? 
+    WHERE id = ?
+  `, [nextStatus, JSON.stringify(newTracking), orderId.toUpperCase()]);
+
+  return await getOrderById(orderId);
 }
 
 function validateCoupon(code) {
@@ -385,11 +659,16 @@ function validateCoupon(code) {
 }
 
 module.exports = {
+  db,
   initDatabase,
+  createUser,
+  findUserByEmail,
+  findUserById,
   getProducts,
   getProductById,
   getOrders,
   getOrderById,
+  getOrdersByUserId,
   createOrder,
   updateOrderStatus,
   validateCoupon,

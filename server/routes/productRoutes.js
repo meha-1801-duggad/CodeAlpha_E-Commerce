@@ -25,6 +25,32 @@ router.get('/categories', async (req, res) => {
   }
 });
 
+// GET /api/products/check-pincode/:pincode - Indian Pincode delivery lookup
+router.get('/check-pincode/:pincode', (req, res) => {
+  const { pincode } = req.params;
+  const pinNum = parseInt(pincode);
+
+  if (!pincode || pincode.length !== 6 || isNaN(pinNum)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Please enter a valid 6-digit Indian PIN code'
+    });
+  }
+
+  // Realistic delivery estimates based on zones
+  const isMetro = ["11", "12", "40", "56", "50", "60", "70"].some(prefix => pincode.startsWith(prefix));
+
+  res.json({
+    success: true,
+    pincode,
+    serviceable: true,
+    deliveryDate: isMetro ? "Delivery by Tomorrow, 2:00 PM" : "Delivery in 2-3 Business Days",
+    courier: isMetro ? "BlueDart Air Express" : "Delhivery Surface Express",
+    codAvailable: true,
+    shippingCost: "FREE"
+  });
+});
+
 // GET /api/products
 router.get('/', async (req, res) => {
   try {
@@ -47,7 +73,7 @@ router.get('/', async (req, res) => {
       );
     }
 
-    // Filter by Price range
+    // Filter by Price range in INR
     if (minPrice) {
       products = products.filter(p => p.price >= parseFloat(minPrice));
     }

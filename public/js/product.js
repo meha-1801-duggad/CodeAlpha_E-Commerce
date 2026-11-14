@@ -1,4 +1,4 @@
-// Dedicated Product Detail Page Logic
+// Product Detail Page Logic with Indian Features
 let currentProduct = null;
 let selectedColor = null;
 let quantity = 1;
@@ -8,13 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const productId = params.get('id');
 
   if (!productId) {
-    showError('No product specified. Returning to store...');
+    showError('No product selected. Returning to storefront...');
     setTimeout(() => { window.location.href = '/index.html'; }, 2000);
     return;
   }
 
   await loadProductDetails(productId);
   setupTabs();
+  setupPincodeChecker();
 });
 
 async function loadProductDetails(id) {
@@ -30,12 +31,12 @@ async function loadProductDetails(id) {
     renderProductPage();
     loadRelatedProducts(currentProduct.category, currentProduct.id);
   } catch (err) {
-    showError('Failed to load product. Please make sure the server is running.');
+    showError('Failed to load product. Make sure the server is online.');
   }
 }
 
 function renderProductPage() {
-  document.title = `${currentProduct.name} - Nova Luxe Store`;
+  document.title = `${currentProduct.name} - Buy Online at Best Price in India | Nova Luxe`;
 
   // Breadcrumbs
   const breadcrumb = document.getElementById('pdp-breadcrumb');
@@ -45,11 +46,11 @@ function renderProductPage() {
       <span>/</span>
       <a href="/index.html">${currentProduct.category}</a>
       <span>/</span>
-      <span style="color: var(--text-primary); font-weight: 600;">${currentProduct.name}</span>
+      <span style="color: var(--text-main); font-weight: 700;">${currentProduct.name}</span>
     `;
   }
 
-  // Main Image & Thumbnails
+  // Gallery
   const mainImg = document.getElementById('pdp-main-image');
   const thumbsContainer = document.getElementById('pdp-thumbnails');
   if (mainImg) mainImg.src = currentProduct.images[0];
@@ -61,12 +62,11 @@ function renderProductPage() {
     `).join('');
   }
 
-  // Info details
+  // Badge
   const badgeEl = document.getElementById('pdp-badge');
   if (badgeEl) {
     if (currentProduct.badge) {
       badgeEl.textContent = currentProduct.badge;
-      badgeEl.className = `card-badge ${currentProduct.badge.toLowerCase().replace(/\s+/g, '-')}`;
       badgeEl.style.display = 'inline-block';
     } else {
       badgeEl.style.display = 'none';
@@ -75,25 +75,24 @@ function renderProductPage() {
 
   document.getElementById('pdp-title').textContent = currentProduct.name;
   document.getElementById('pdp-tagline').textContent = currentProduct.tagline;
-  document.getElementById('pdp-price').textContent = `$${currentProduct.price.toFixed(2)}`;
+  document.getElementById('pdp-price').textContent = formatINR(currentProduct.price);
 
   const origPriceEl = document.getElementById('pdp-orig-price');
   const discountPill = document.getElementById('pdp-discount-pill');
   if (currentProduct.originalPrice && currentProduct.originalPrice > currentProduct.price) {
-    origPriceEl.textContent = `$${currentProduct.originalPrice.toFixed(2)}`;
+    origPriceEl.textContent = formatINR(currentProduct.originalPrice);
     origPriceEl.style.display = 'inline-block';
     const percent = Math.round(((currentProduct.originalPrice - currentProduct.price) / currentProduct.originalPrice) * 100);
-    discountPill.textContent = `SAVE ${percent}%`;
+    discountPill.textContent = `${percent}% OFF SPECIAL FESTIVE DEAL`;
     discountPill.style.display = 'inline-block';
   } else {
     origPriceEl.style.display = 'none';
     discountPill.style.display = 'none';
   }
 
-  // Star Rating
-  const stars = '★'.repeat(Math.round(currentProduct.rating)) + '☆'.repeat(5 - Math.round(currentProduct.rating));
-  document.getElementById('pdp-stars').textContent = stars;
-  document.getElementById('pdp-reviews-count').textContent = `${currentProduct.rating} (${currentProduct.reviewsCount} customer reviews)`;
+  // Rating
+  document.getElementById('pdp-stars').textContent = `★ ${currentProduct.rating}`;
+  document.getElementById('pdp-reviews-count').textContent = `(${currentProduct.reviewsCount.toLocaleString('en-IN')} verified Indian buyers)`;
 
   // Colors / Variants
   const variantBlock = document.getElementById('pdp-variant-block');
@@ -118,12 +117,6 @@ function renderProductPage() {
     variantBlock.style.display = 'none';
   }
 
-  // Stock
-  const stockText = document.getElementById('pdp-stock-text');
-  if (stockText) {
-    stockText.textContent = `In Stock (${currentProduct.stock} units ready to ship)`;
-  }
-
   // Quantity controls
   const qtyVal = document.getElementById('pdp-qty-val');
   document.getElementById('pdp-qty-minus').onclick = () => {
@@ -139,35 +132,33 @@ function renderProductPage() {
     }
   };
 
-  // Add to cart button
+  // Add to cart & Buy now
   document.getElementById('pdp-add-btn').onclick = () => {
     Cart.addItem(currentProduct, quantity, selectedColor);
   };
 
-  // Buy Now button
   document.getElementById('pdp-buynow-btn').onclick = () => {
     Cart.addItem(currentProduct, quantity, selectedColor);
     window.location.href = '/checkout.html';
   };
 
-  // Populate Tab 1: Description & Features
+  // Highlights & Specs
   document.getElementById('pdp-description-text').textContent = currentProduct.description;
   const featuresList = document.getElementById('pdp-features-list');
   if (featuresList && currentProduct.features) {
     featuresList.innerHTML = currentProduct.features.map(f => `
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        <span>${f}</span>
+      <li style="display: flex; align-items: center; gap: 0.75rem; background: #fff; border: 1px solid var(--border-light); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="font-weight: 600; color: var(--text-main);">${f}</span>
       </li>
     `).join('');
   }
 
-  // Populate Tab 2: Specs Table
   const specsTable = document.getElementById('pdp-specs-tbody');
   if (specsTable && currentProduct.specs) {
     specsTable.innerHTML = Object.entries(currentProduct.specs).map(([k, v]) => `
       <tr>
-        <td>${k}</td>
+        <td style="font-weight: 700; width: 35%; background: var(--bg-subtle); color: var(--text-main);">${k}</td>
         <td>${v}</td>
       </tr>
     `).join('');
@@ -179,6 +170,41 @@ function switchPdpThumb(imgSrc, thumbElem) {
   if (mainImg) mainImg.src = imgSrc;
   document.querySelectorAll('.pdp-thumb').forEach(t => t.classList.remove('active'));
   if (thumbElem) thumbElem.classList.add('active');
+}
+
+function setupPincodeChecker() {
+  const btn = document.getElementById('btn-check-pincode');
+  const input = document.getElementById('pincode-input');
+  const resBox = document.getElementById('pincode-result');
+
+  if (!btn || !input || !resBox) return;
+
+  btn.addEventListener('click', async () => {
+    const pin = input.value.trim();
+    if (pin.length !== 6 || isNaN(pin)) {
+      Toast.error('Please enter a valid 6-digit Indian PIN code (e.g. 560001, 110001)');
+      return;
+    }
+
+    btn.textContent = 'Checking...';
+    try {
+      const data = await API.checkPincode(pin);
+      if (data.success) {
+        resBox.style.display = 'block';
+        resBox.innerHTML = `
+          <div style="background: var(--accent-emerald-light); border: 1px solid #a7f3d0; padding: 0.75rem 1rem; border-radius: var(--radius-md); color: var(--accent-emerald);">
+            <div>🚚 <strong>${data.deliveryDate}</strong></div>
+            <div style="font-size: 0.8rem; color: #047857; margin-top: 0.25rem;">Courier: ${data.courier} · Cash on Delivery & UPI available · Shipping: ${data.shippingCost}</div>
+          </div>
+        `;
+        Toast.success(`PIN ${pin} is serviceable with Express Delivery!`);
+      }
+    } catch {
+      Toast.error('Unable to verify pincode');
+    } finally {
+      btn.textContent = 'Check';
+    }
+  });
 }
 
 function setupTabs() {
@@ -220,7 +246,7 @@ async function loadRelatedProducts(category, excludeId) {
           <div class="card-category">${p.category}</div>
           <h4 class="card-title"><a href="/product.html?id=${p.id}">${p.name}</a></h4>
           <div class="card-footer" style="padding-top: 0.75rem;">
-            <span class="card-price">$${p.price.toFixed(2)}</span>
+            <span class="card-price">${formatINR(p.price)}</span>
             <a href="/product.html?id=${p.id}" class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.82rem;">View Details</a>
           </div>
         </div>

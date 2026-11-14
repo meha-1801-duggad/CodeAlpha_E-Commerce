@@ -1,6 +1,6 @@
-// Checkout Page Logic
+// Checkout Page Logic with Indian Payments & GST
 let selectedShipping = 'standard';
-let selectedPayment = 'card';
+let selectedPayment = 'upi';
 let appliedCouponData = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,40 +8,56 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAutofill();
   setupShippingOptions();
   setupPaymentTabs();
-  setupCardFormatting();
   setupCouponForm();
   setupOrderSubmission();
+  prefillLoggedInUser();
+  window.addEventListener('authChanged', prefillLoggedInUser);
 });
+
+function prefillLoggedInUser() {
+  if (Auth && Auth.isLoggedIn() && Auth.user) {
+    const nameInput = document.getElementById('fullName');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+
+    if (nameInput && !nameInput.value) nameInput.value = Auth.user.name;
+    if (emailInput && !emailInput.value) emailInput.value = Auth.user.email;
+    if (phoneInput && !phoneInput.value && Auth.user.phone) phoneInput.value = Auth.user.phone;
+  }
+}
 
 function calculateOrderTotals() {
   const subtotal = Cart.getSubtotal();
   
-  // Shipping calculation
+  // Shipping: Free above ₹999, else ₹99; Express is ₹199
   let shippingCost = 0;
   if (selectedShipping === 'express') {
-    shippingCost = 14.99;
-  } else if (selectedShipping === 'priority') {
-    shippingCost = 24.99;
+    shippingCost = 199;
   } else {
-    shippingCost = subtotal >= 100 ? 0 : 4.99;
+    shippingCost = subtotal >= 999 ? 0 : 99;
   }
 
   // Discount
   let discount = 0;
   if (appliedCouponData) {
     if (appliedCouponData.discountPercent) {
-      discount = (subtotal * appliedCouponData.discountPercent) / 100;
+      discount = Math.round((subtotal * appliedCouponData.discountPercent) / 100);
+    } else if (appliedCouponData.flatAmount) {
+      discount = Math.min(subtotal, appliedCouponData.flatAmount);
     }
     if (appliedCouponData.freeShipping) {
       shippingCost = 0;
     }
   }
 
+  // GST Breakdown: 18% GST (9% CGST + 9% SGST)
   const taxableAmount = Math.max(0, subtotal - discount);
-  const tax = Math.round(taxableAmount * 0.08 * 100) / 100;
-  const total = Math.max(0, Math.round((taxableAmount + shippingCost + tax) * 100) / 100);
+  const cgst = Math.round(taxableAmount * 0.09);
+  const sgst = Math.round(taxableAmount * 0.09);
+  const totalGst = cgst + sgst;
+  const total = Math.max(0, taxableAmount + shippingCost + totalGst);
 
-  return { subtotal, shippingCost, discount, tax, total };
+  return { subtotal, shippingCost, discount, cgst, sgst, totalGst, total };
 }
 
 function renderCheckoutSummary() {
@@ -60,58 +76,55 @@ function renderCheckoutSummary() {
 
   if (itemsContainer) {
     itemsContainer.innerHTML = Cart.items.map(item => `
-      <div style="display: flex; gap: 0.85rem; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-color);">
-        <img src="${item.image}" alt="${item.name}" style="width: 52px; height: 52px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color);">
+      <div style="display: flex; gap: 0.85rem; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-light);">
+        <img src="${item.image}" alt="${item.name}" style="width: 52px; height: 52px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-light);">
         <div style="flex: 1; min-width: 0;">
-          <div style="font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</div>
+          <div style="font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);">${item.name}</div>
           <div style="font-size: 0.78rem; color: var(--text-muted);">Qty: ${item.quantity} · ${item.color}</div>
         </div>
-        <div style="font-size: 0.92rem; font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</div>
+        <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">${formatINR(item.price * item.quantity)}</div>
       </div>
     `).join('');
   }
 
-  const { subtotal, shippingCost, discount, tax, total } = calculateOrderTotals();
+  const { subtotal, shippingCost, discount, cgst, sgst, total } = calculateOrderTotals();
 
-  document.getElementById('summary-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('summary-subtotal').textContent = formatINR(subtotal);
   
   const discountRow = document.getElementById('summary-discount-row');
   const discountVal = document.getElementById('summary-discount');
   if (discount > 0) {
     discountRow.style.display = 'flex';
-    discountVal.textContent = `-$${discount.toFixed(2)}`;
+    discountVal.textContent = `-${formatINR(discount)}`;
   } else {
     discountRow.style.display = 'none';
   }
 
-  document.getElementById('summary-shipping').textContent = shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`;
-  document.getElementById('summary-tax').textContent = `$${tax.toFixed(2)}`;
-  document.getElementById('summary-total').textContent = `$${total.toFixed(2)}`;
+  document.getElementById('summary-shipping').textContent = shippingCost === 0 ? 'FREE' : formatINR(shippingCost);
+  document.getElementById('summary-cgst').textContent = formatINR(cgst);
+  document.getElementById('summary-sgst').textContent = formatINR(sgst);
+  document.getElementById('summary-total').textContent = formatINR(total);
 }
 
-// Autofill for instant testing & demo presentations
+// Indian Demo Autofill
 function setupAutofill() {
   const btn = document.getElementById('btn-autofill-demo');
   if (!btn) return;
 
   btn.addEventListener('click', () => {
-    document.getElementById('fullName').value = 'Sarah Connor';
-    document.getElementById('email').value = 'sarah.connor@cyberdyne.io';
-    document.getElementById('phone').value = '+1 (555) 789-2049';
-    document.getElementById('address').value = '404 Resistance Blvd, Suite 101';
-    document.getElementById('city').value = 'Los Angeles';
-    document.getElementById('state').value = 'CA';
-    document.getElementById('zip').value = '90001';
-    document.getElementById('cardNumber').value = '4242 4242 4242 4242';
-    document.getElementById('cardExpiry').value = '12/28';
-    document.getElementById('cardCvc').value = '739';
+    document.getElementById('fullName').value = 'Rahul Sharma';
+    document.getElementById('email').value = 'rahul.sharma@example.com';
+    document.getElementById('phone').value = '9876543210';
+    document.getElementById('address').value = 'Flat 402, Green Glen Layout, Bellandur';
+    document.getElementById('city').value = 'Bengaluru';
+    document.getElementById('state').value = 'Karnataka';
+    document.getElementById('zip').value = '560103';
+    
+    // Select UPI & fill test VPA
+    const upiInput = document.getElementById('upiIdInput');
+    if (upiInput) upiInput.value = 'rahul@okaxis';
 
-    // update preview card
-    document.getElementById('card-preview-num').textContent = '•••• •••• •••• 4242';
-    document.getElementById('card-preview-name').textContent = 'SARAH CONNOR';
-    document.getElementById('card-preview-exp').textContent = '12/28';
-
-    Toast.success('Demo customer details auto-filled!');
+    Toast.success('Indian customer details auto-filled (Bengaluru, Karnataka)!');
   });
 }
 
@@ -129,8 +142,10 @@ function setupShippingOptions() {
 
 function setupPaymentTabs() {
   const tabs = document.querySelectorAll('.payment-tab');
-  const cardSection = document.getElementById('payment-card-section');
-  const codSection = document.getElementById('payment-cod-section');
+  const upiSec = document.getElementById('payment-upi-section');
+  const cardSec = document.getElementById('payment-card-section');
+  const netSec = document.getElementById('payment-netbanking-section');
+  const codSec = document.getElementById('payment-cod-section');
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -138,50 +153,12 @@ function setupPaymentTabs() {
       tab.classList.add('active');
       selectedPayment = tab.dataset.payment;
 
-      if (selectedPayment === 'card') {
-        if (cardSection) cardSection.style.display = 'block';
-        if (codSection) codSection.style.display = 'none';
-      } else {
-        if (cardSection) cardSection.style.display = 'none';
-        if (codSection) codSection.style.display = 'block';
-      }
+      if (upiSec) upiSec.style.display = selectedPayment === 'upi' ? 'block' : 'none';
+      if (cardSec) cardSec.style.display = selectedPayment === 'card' ? 'block' : 'none';
+      if (netSec) netSec.style.display = selectedPayment === 'netbanking' ? 'block' : 'none';
+      if (codSec) codSec.style.display = selectedPayment === 'cod' ? 'block' : 'none';
     });
   });
-}
-
-function setupCardFormatting() {
-  const cardInput = document.getElementById('cardNumber');
-  const previewNum = document.getElementById('card-preview-num');
-  const cardNameInput = document.getElementById('fullName');
-  const previewName = document.getElementById('card-preview-name');
-  const expInput = document.getElementById('cardExpiry');
-  const previewExp = document.getElementById('card-preview-exp');
-
-  if (cardInput) {
-    cardInput.addEventListener('input', (e) => {
-      let val = e.target.value.replace(/\D/g, '').substring(0, 16);
-      let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
-      e.target.value = formatted;
-      if (previewNum) {
-        previewNum.textContent = formatted.length > 0 ? formatted : '•••• •••• •••• ••••';
-      }
-    });
-  }
-
-  if (cardNameInput && previewName) {
-    cardNameInput.addEventListener('input', (e) => {
-      previewName.textContent = e.target.value.trim().toUpperCase() || 'YOUR NAME';
-    });
-  }
-
-  if (expInput && previewExp) {
-    expInput.addEventListener('input', (e) => {
-      let val = e.target.value.replace(/\D/g, '').substring(0, 4);
-      if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
-      e.target.value = val;
-      previewExp.textContent = val || 'MM/YY';
-    });
-  }
 }
 
 function setupCouponForm() {
@@ -192,7 +169,7 @@ function setupCouponForm() {
   btn.addEventListener('click', async () => {
     const code = input.value.trim().toUpperCase();
     if (!code) {
-      Toast.error('Please enter a coupon code (Try: NOVA20 or WELCOME10)');
+      Toast.error('Please enter a coupon code (Try: FESTIVE20 or INDIA10)');
       return;
     }
 
@@ -200,20 +177,21 @@ function setupCouponForm() {
     btn.textContent = 'Applying...';
 
     try {
-      const data = await API.validateCoupon(code);
+      const data = await API.validateCoupon(code, Cart.getSubtotal());
       if (data.success && data.coupon) {
         appliedCouponData = data.coupon;
         Toast.success(`Coupon "${code}" applied: ${data.coupon.description}!`);
         input.disabled = true;
         btn.textContent = 'Applied';
         btn.style.background = 'var(--accent-emerald)';
+        btn.style.color = '#fff';
         renderCheckoutSummary();
       } else {
         Toast.error(data.error || 'Invalid coupon code');
         btn.textContent = 'Apply';
         btn.disabled = false;
       }
-    } catch (err) {
+    } catch {
       Toast.error('Could not validate coupon code');
       btn.textContent = 'Apply';
       btn.disabled = false;
@@ -243,10 +221,17 @@ function setupOrderSubmission() {
     const state = document.getElementById('state').value.trim();
     const zip = document.getElementById('zip').value.trim();
 
-    if (!fullName || !email || !address || !city || !zip) {
-      Toast.error('Please complete all required shipping fields');
+    if (!fullName || !phone || !address || !city || !zip) {
+      Toast.error('Please fill in complete Indian shipping address and phone number');
       return;
     }
+
+    if (zip.length !== 6 || isNaN(zip)) {
+      Toast.error('PIN code must be exactly 6 digits');
+      return;
+    }
+
+    const upiId = document.getElementById('upiIdInput')?.value.trim();
 
     const payload = {
       items: Cart.items.map(item => ({
@@ -261,37 +246,36 @@ function setupOrderSubmission() {
         address,
         city,
         state,
-        zip,
-        country: 'United States'
+        pincode: zip,
+        country: 'India'
       },
       shippingMethod: selectedShipping,
-      paymentMethod: selectedPayment === 'card' 
-        ? `Credit Card (ending in ${document.getElementById('cardNumber')?.value.slice(-4) || '4242'})` 
-        : 'Cash on Delivery (COD)',
+      paymentMethod: selectedPayment,
+      upiId: selectedPayment === 'upi' ? (upiId || 'PhonePe / GPay QR') : null,
       couponCode: appliedCouponData ? appliedCouponData.code : null
     };
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
-      Processing Secure Payment...
+      Processing Secure Payment with Bank / UPI Gateway...
     `;
 
     try {
       const response = await API.createOrder(payload);
       if (response.success && response.order) {
         Cart.clear();
-        Toast.success('Order placed successfully!');
+        Toast.success('Order placed successfully! Generating GST Invoice...');
         window.location.href = `/order-confirmation.html?id=${response.order.id}`;
       } else {
         Toast.error(response.error || 'Failed to place order');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Complete Order';
+        submitBtn.textContent = 'Confirm Order & Pay Now';
       }
     } catch (err) {
-      Toast.error('Network error during checkout: ' + err.message);
+      Toast.error('Error submitting order: ' + err.message);
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Complete Order';
+      submitBtn.textContent = 'Confirm Order & Pay Now';
     }
   });
 }
