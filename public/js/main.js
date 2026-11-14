@@ -173,7 +173,7 @@ function renderProductCard(product) {
       <div class="card-body">
         <div class="card-category">${product.category}</div>
         <h3 class="card-title">
-          <a href="/product.html?id=${product.id}">${product.name}</a>
+          <a href="product.html?id=${product.id}">${product.name}</a>
         </h3>
         <p class="card-tagline">${product.tagline}</p>
         
@@ -370,7 +370,7 @@ function openQuickView(productId) {
       </div>
 
       <div style="margin-top: 1.25rem;">
-        <a href="/product.html?id=${product.id}" style="color: var(--primary); font-size: 0.9rem; font-weight: 700;">
+        <a href="product.html?id=${product.id}" style="color: var(--primary); font-size: 0.9rem; font-weight: 700;">
           View Full Specs, Pincode Delivery & Customer Reviews →
         </a>
       </div>

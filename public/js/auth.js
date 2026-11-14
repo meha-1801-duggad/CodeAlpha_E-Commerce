@@ -106,7 +106,7 @@ const Auth = {
                 <div style="font-weight: 800; color: var(--text-main); font-size: 0.92rem;">${this.user.name}</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted);">${this.user.email}</div>
               </div>
-              <a href="/orders.html" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.75rem 1.15rem; color: var(--text-main); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;">
+              <a href="orders.html" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.75rem 1.15rem; color: var(--text-main); font-size: 0.88rem; font-weight: 600; transition: background 0.2s;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                 My Orders & Invoices
               </a>

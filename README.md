@@ -1,5 +1,8 @@
 # NOVA LUXE 🇮🇳 — Full-Stack Indian E-Commerce Web Application
 
+> 🌐 **Live Interactive Demo:** [https://meha-1801-duggad.github.io/CodeAlpha_E-Commerce/](https://meha-1801-duggad.github.io/CodeAlpha_E-Commerce/)  
+> 📁 **GitHub Repository:** [https://github.com/meha-1801-duggad/CodeAlpha_E-Commerce](https://github.com/meha-1801-duggad/CodeAlpha_E-Commerce)
+
 A full-stack, enterprise-grade E-Commerce platform built for internship demonstration featuring **User Authentication**, a persistent **SQLite Database** (`users`, `products`, `orders`), **Indian Rupee (₹) pricing**, **UPI instant payments**, **18% GST invoicing**, and a vibrant, high-energy UI/UX.
 
 ---

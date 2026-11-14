@@ -53,7 +53,7 @@ async function loadUserOrderHistory() {
                     <span class="card-badge" style="position: static; font-size: 0.75rem; background: var(--primary);">${o.status}</span>
                   </td>
                   <td>
-                    <a href="/orders.html?id=${o.id}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700;">
+                    <a href="orders.html?id=${o.id}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 700;">
                       View Details & Invoice
                     </a>
                   </td>
@@ -249,7 +249,7 @@ function setupOrderLookupForm() {
       e.preventDefault();
       const id = input.value.trim().toUpperCase();
       if (!id) return;
-      window.location.href = `/orders.html?id=${id}`;
+      window.location.href = `orders.html?id=${id}`;
     });
   }
 }
@@ -262,7 +262,7 @@ function showError(msg) {
       <div style="background: var(--accent-rose-light); border: 1px solid #fecdd3; padding: 1.5rem; border-radius: var(--radius-lg); text-align: center; color: var(--accent-rose); max-width: 500px; margin: 2rem auto;">
         <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700;">Order Lookup Notice</h4>
         <p style="font-size: 0.9rem; color: #9f1239;">${msg}</p>
-        <a href="/index.html" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Return to Storefront</a>
+        <a href="index.html" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Return to Storefront</a>
       </div>
     `;
   }

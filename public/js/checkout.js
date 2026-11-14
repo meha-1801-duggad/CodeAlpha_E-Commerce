@@ -266,7 +266,7 @@ function setupOrderSubmission() {
       if (response.success && response.order) {
         Cart.clear();
         Toast.success('Order placed successfully! Generating GST Invoice...');
-        window.location.href = `/order-confirmation.html?id=${response.order.id}`;
+        window.location.href = `order-confirmation.html?id=${response.order.id}`;
       } else {
         Toast.error(response.error || 'Failed to place order');
         submitBtn.disabled = false;

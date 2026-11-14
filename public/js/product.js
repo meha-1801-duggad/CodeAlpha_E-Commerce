@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!productId) {
     showError('No product selected. Returning to storefront...');
-    setTimeout(() => { window.location.href = '/index.html'; }, 2000);
+    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
     return;
   }
 
@@ -42,9 +42,9 @@ function renderProductPage() {
   const breadcrumb = document.getElementById('pdp-breadcrumb');
   if (breadcrumb) {
     breadcrumb.innerHTML = `
-      <a href="/index.html">Home</a>
+      <a href="index.html">Home</a>
       <span>/</span>
-      <a href="/index.html">${currentProduct.category}</a>
+      <a href="index.html">${currentProduct.category}</a>
       <span>/</span>
       <span style="color: var(--text-main); font-weight: 700;">${currentProduct.name}</span>
     `;
@@ -139,7 +139,7 @@ function renderProductPage() {
 
   document.getElementById('pdp-buynow-btn').onclick = () => {
     Cart.addItem(currentProduct, quantity, selectedColor);
-    window.location.href = '/checkout.html';
+    window.location.href = 'checkout.html';
   };
 
   // Highlights & Specs
@@ -244,10 +244,10 @@ async function loadRelatedProducts(category, excludeId) {
         </div>
         <div class="card-body">
           <div class="card-category">${p.category}</div>
-          <h4 class="card-title"><a href="/product.html?id=${p.id}">${p.name}</a></h4>
+          <h4 class="card-title"><a href="product.html?id=${p.id}">${p.name}</a></h4>
           <div class="card-footer" style="padding-top: 0.75rem;">
             <span class="card-price">${formatINR(p.price)}</span>
-            <a href="/product.html?id=${p.id}" class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.82rem;">View Details</a>
+            <a href="product.html?id=${p.id}" class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.82rem;">View Details</a>
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ function showError(msg) {
     container.innerHTML = `
       <div style="text-align: center; padding: 5rem 1rem;">
         <h2 style="color: var(--accent-rose); margin-bottom: 1rem;">${msg}</h2>
-        <a href="/index.html" class="btn-primary">Browse All Products</a>
+        <a href="index.html" class="btn-primary">Browse All Products</a>
       </div>
     `;
   }

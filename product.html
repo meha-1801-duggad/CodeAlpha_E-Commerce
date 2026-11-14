@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details — NOVA LUXE India</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <span>🇮🇳 <strong>FESTIVE SALE:</strong> Up to 60% OFF + Extra 20% with code <span class="coupon-pill">FESTIVE20</span></span>
+    <span style="opacity: 0.6;">|</span>
+    <span>⚡ FREE Express BlueDart Delivery on orders above ₹999</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span>NOVA<span>LUXE</span> <span class="country-flag">🇮🇳</span></span>
+      </a>
+
+      <div class="nav-actions">
+        <div class="nav-auth-container"></div>
+        <a href="index.html" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+          ← Back to Catalog
+        </a>
+
+        <button class="nav-icon-btn cart-toggle-btn" aria-label="Open Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="badge-counter cart-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail Content -->
+  <main class="pdp-page">
+    <div class="container" id="pdp-container">
+      
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" id="pdp-breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <span>Catalog</span>
+        <span>/</span>
+        <span style="color: var(--text-main); font-weight: 700;">Loading...</span>
+      </nav>
+
+      <!-- Main PDP Grid -->
+      <div class="pdp-grid">
+        
+        <!-- Left: Image Gallery -->
+        <div>
+          <div class="pdp-main-image-wrap">
+            <img id="pdp-main-image" src="" alt="Product view" class="pdp-main-image">
+          </div>
+          <div class="pdp-thumbnails" id="pdp-thumbnails">
+            <!-- Dynamically populated thumbnails -->
+          </div>
+        </div>
+
+        <!-- Right: Product Info & Buy Controls -->
+        <div>
+          <span id="pdp-badge" class="card-badge bestseller" style="display: none; position: static; margin-bottom: 0.75rem;"></span>
+          <h1 class="pdp-title" id="pdp-title">Loading Product...</h1>
+          <p class="pdp-tagline" id="pdp-tagline"></p>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <span id="pdp-stars" class="rating-pill" style="font-size: 0.95rem; padding: 0.25rem 0.65rem;">★ 4.9</span>
+            <span id="pdp-reviews-count" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">(1,420 ratings)</span>
+            <span style="color: var(--accent-emerald); font-size: 0.85rem; font-weight: 700;">✓ In Stock</span>
+          </div>
+
+          <!-- Price & Discounts -->
+          <div class="pdp-price-row">
+            <span class="pdp-current-price" id="pdp-price">₹0</span>
+            <span class="pdp-orig-price" id="pdp-orig-price" style="display: none;">₹0</span>
+            <span class="pdp-discount-pill" id="pdp-discount-pill" style="display: none;">20% OFF</span>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: -0.75rem; margin-bottom: 1.5rem;">
+            Inclusive of all taxes (GST 18%) · Free Shipping above ₹999
+          </div>
+
+          <!-- Pincode Delivery Estimator (Amazon India / Flipkart style) -->
+          <div class="pincode-checker-box">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.92rem; color: var(--text-main);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>Check Delivery & COD Availability</span>
+            </div>
+            <div class="pincode-input-group">
+              <input type="text" id="pincode-input" class="pincode-input" placeholder="Enter 6-digit PIN" maxlength="6">
+              <button type="button" id="btn-check-pincode" class="btn-secondary" style="padding: 0 1.25rem; font-weight: 700;">Check</button>
+            </div>
+            <div id="pincode-result" class="pincode-res"></div>
+          </div>
+
+          <!-- Color / Variant Picker -->
+          <div id="pdp-variant-block" style="margin-bottom: 1.5rem;">
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.65rem;">
+              Select Color: <strong id="pdp-color-label" style="color: var(--text-main);">Standard</strong>
+            </div>
+            <div id="pdp-color-options" style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Quantity & Purchase CTAs -->
+          <div style="display: flex; gap: 1rem; margin-bottom: 2rem; align-items: center; flex-wrap: wrap;">
+            <div class="qty-control" style="padding: 0.35rem 0.5rem;">
+              <button class="qty-btn" id="pdp-qty-minus" style="width: 32px; height: 32px;">−</button>
+              <span class="qty-num" id="pdp-qty-val" style="min-width: 36px; font-size: 1rem;">1</span>
+              <button class="qty-btn" id="pdp-qty-plus" style="width: 32px; height: 32px;">+</button>
+            </div>
+
+            <button class="btn-primary" id="pdp-add-btn" style="flex: 1; min-width: 180px; justify-content: center; padding: 0.95rem 1.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Add to Bag
+            </button>
+
+            <button class="btn-secondary" id="pdp-buynow-btn" style="background: #ea580c; color: #fff; border-color: #ea580c; padding: 0.95rem 1.75rem; font-weight: 700;">
+              ⚡ Buy Now
+            </button>
+          </div>
+
+          <!-- Trust Strip Inside PDP -->
+          <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.15rem; font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.65rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>100% Genuine Product</strong> with Official Brand Warranty</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>7-Day Replacement Policy</strong> for manufacturing defects</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Instant UPI & Cash on Delivery</strong> supported at your doorstep</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs: Features, Specs, Reviews -->
+      <section style="margin-top: 4rem;">
+        <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--border-light); margin-bottom: 2rem;">
+          <button class="tab-btn active" data-tab="features" style="padding: 0.85rem 1.5rem; font-weight: 700; color: var(--text-main); font-size: 1rem;">Highlights & Description</button>
+          <button class="tab-btn" data-tab="specs" style="padding: 0.85rem 1.5rem; font-weight: 700; color: var(--text-muted); font-size: 1rem;">Technical Specifications</button>
+          <button class="tab-btn" data-tab="reviews" style="padding: 0.85rem 1.5rem; font-weight: 700; color: var(--text-muted); font-size: 1rem;">Customer Ratings & Reviews</button>
+        </div>
+
+        <!-- Tab 1: Highlights -->
+        <div class="tab-pane active" id="tab-features">
+          <p id="pdp-description-text" style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; max-width: 820px; color: var(--text-secondary);"></p>
+          <ul id="pdp-features-list" style="list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- Tab 2: Specs -->
+        <div class="tab-pane" id="tab-specs">
+          <table class="invoice-table" style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+            <tbody id="pdp-specs-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab 3: Reviews -->
+        <div class="tab-pane" id="tab-reviews">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+            <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: var(--text-main);">Pooja Hegde (Bengaluru)</strong>
+                <span class="rating-pill">★ 5.0</span>
+              </div>
+              <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                "Super fast delivery! Placed order on Tuesday evening and BlueDart delivered by Wednesday noon in Bengaluru. The spatial audio and battery life are simply mindblowing."
+              </p>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem;">Verified Purchase · Paid via UPI</div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: var(--text-main);">Amitabh Sen (Kolkata)</strong>
+                <span class="rating-pill">★ 5.0</span>
+              </div>
+              <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                "Exceptional build quality and premium unboxing experience. The GST invoice was attached inside with genuine warranty card. Highly recommended!"
+              </p>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1rem;">Verified Purchase · 2 weeks ago</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Products -->
+      <section style="margin-top: 5rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.75rem; color: var(--text-main);">Similar Top Recommendations</h3>
+        <div class="product-grid" id="related-products-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <div>© 2026 NOVA LUXE Retail India Pvt. Ltd.</div>
+      <a href="index.html" style="color: #818cf8;">← Back to All Deals</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/toast.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/product.js"></script>
+</body>
+</html>

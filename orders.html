@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order & GST Tax Invoice — NOVA LUXE India</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <span>📦 Real-Time BlueDart / Delhivery Dispatch & Official GST Tax Invoicing</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span>NOVA<span>LUXE</span> <span class="country-flag">🇮🇳</span></span>
+      </a>
+
+      <div class="nav-actions">
+        <div class="nav-auth-container"></div>
+        <a href="index.html" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="order-confirmation-page">
+    <div class="container">
+
+      <!-- Order Lookup Search Bar -->
+      <section style="max-width: 620px; margin: 0 auto 3rem; text-align: center;">
+        <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Track Your Order</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">Enter your Nova Luxe Order ID (e.g. ORD-IN-84912) to inspect real-time courier dispatch</p>
+        
+        <form id="order-lookup-form" style="display: flex; gap: 0.5rem;">
+          <input type="text" id="lookup-order-id-input" class="form-input" placeholder="Enter Order ID (e.g. ORD-IN-84912)" style="flex: 1; text-transform: uppercase;">
+          <button type="submit" class="btn-primary" style="padding: 0 1.75rem;">Track Order</button>
+        </form>
+      </section>
+
+      <!-- Logged-in User Orders History Section (from SQLite) -->
+      <section id="user-orders-history-section" style="display: none; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 2rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-card);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">My Order History (Saved in SQLite DB)</h3>
+          <span id="user-orders-count-badge" class="cat-pill active" style="font-size: 0.8rem;">0 Orders</span>
+        </div>
+        <div id="user-orders-table-wrap" style="overflow-x: auto;">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- Loading State -->
+      <div id="order-loading" style="text-align: center; padding: 3rem 0; color: var(--text-muted); display: none;">
+        <p>Retrieving order details from Bengaluru fulfillment server...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="order-error" style="display: none;"></div>
+
+      <!-- Order Details Container -->
+      <div id="order-details-container" style="display: none;">
+
+        <!-- Live Status Tracker Card with Simulation Button -->
+        <div class="status-tracker-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Live Dispatch Timeline</div>
+              <h2 style="font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem; color: var(--text-main);">
+                <span id="display-order-id">ORD-00000</span>
+                <span id="display-order-status-badge" class="card-badge" style="position: static; font-size: 0.82rem; background: var(--primary);">Order Placed</span>
+              </h2>
+            </div>
+
+            <!-- Internship Interactive Demo Button -->
+            <button id="btn-advance-status" class="btn-simulate-status">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              Simulate Next Status Update
+            </button>
+          </div>
+
+          <!-- Stepper Timeline -->
+          <div class="stepper-timeline">
+            <div class="stepper-line">
+              <div class="stepper-line-fill" id="stepper-fill-bar" style="width: 0%;"></div>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="step-item done" id="step-1">
+              <div class="step-circle">✓</div>
+              <div class="step-label">Order Placed</div>
+              <div class="step-time" style="font-size: 0.78rem; color: var(--text-muted);">Confirmed</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item" id="step-2">
+              <div class="step-circle">2</div>
+              <div class="step-label">Processing</div>
+              <div class="step-time" style="font-size: 0.78rem; color: var(--text-muted);">Quality Check</div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item" id="step-3">
+              <div class="step-circle">3</div>
+              <div class="step-label">Shipped</div>
+              <div class="step-time" style="font-size: 0.78rem; color: var(--text-muted);">BlueDart Express</div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-item" id="step-4">
+              <div class="step-circle">4</div>
+              <div class="step-label">Delivered</div>
+              <div class="step-time" style="font-size: 0.78rem; color: var(--text-muted);">Doorstep Handover</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div>💡 <strong>Internship Evaluation Feature:</strong> Click <em>"Simulate Next Status Update"</em> to demonstrate live backend status updates (`PATCH /api/orders/:id/status`).</div>
+            <button class="btn-secondary btn-print" onclick="window.print()" style="padding: 0.45rem 1rem; font-size: 0.82rem; font-weight: 700;">
+              🖨️ Print GST Tax Invoice
+            </button>
+          </div>
+        </div>
+
+        <!-- Official GST Tax Invoice -->
+        <div class="invoice-card">
+          <div class="invoice-header">
+            <div>
+              <div class="brand-logo" style="margin-bottom: 0.5rem;">
+                <div class="logo-icon" style="width: 32px; height: 32px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                </div>
+                <span style="font-size: 1.25rem;">NOVA<span>LUXE</span> RETAIL INDIA</span>
+              </div>
+              <div style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">
+                GST Tax Invoice & Delivery Packing Slip<br>
+                Fulfillment Center: Whitefield Tech Hub, Bengaluru, KA 560066<br>
+                <strong>GSTIN: 29AAACN1234F1Z5</strong>
+              </div>
+            </div>
+
+            <div style="text-align: right;">
+              <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Invoice Date</div>
+              <div id="display-order-date" style="font-weight: 800; font-size: 1rem; color: var(--text-main);">-</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;">Place of Supply: Inter-State / Intra-State</div>
+            </div>
+          </div>
+
+          <!-- Customer & Shipping Summary Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-light);">
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Billed & Delivered To</div>
+              <div id="display-customer-name" style="font-weight: 700; color: var(--text-main);">-</div>
+              <div id="display-customer-phone" style="font-size: 0.85rem; color: var(--text-secondary);">-</div>
+              <div id="display-shipping-address" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">-</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Courier & Dispatch</div>
+              <div id="display-shipping-method" style="font-size: 0.88rem; font-weight: 700; color: var(--text-main);">-</div>
+              <div style="font-size: 0.8rem; color: var(--accent-emerald); margin-top: 0.25rem;">✓ Insured Doorstep Delivery</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">Payment Information</div>
+              <div id="display-payment-method" style="font-size: 0.88rem; font-weight: 700; color: var(--text-main);">-</div>
+              <div style="font-size: 0.8rem; color: var(--accent-emerald); margin-top: 0.25rem;">Transaction Successful</div>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th>Item & HSN Description</th>
+                <th>Price (INR)</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="invoice-items-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+
+          <!-- Financial Breakdown Table (Including GST) -->
+          <div style="display: flex; justify-content: flex-end;">
+            <div style="width: 100%; max-width: 360px;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Taxable Value:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 700;" id="invoice-subtotal">₹0</td>
+                </tr>
+                <tr id="invoice-discount-row" style="display: none;">
+                  <td style="padding: 0.4rem 0; color: var(--accent-emerald); font-size: 0.9rem;">Coupon Savings:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 700; color: var(--accent-emerald);" id="invoice-discount">-₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Shipping Charges:</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 700;" id="invoice-shipping">FREE</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">Central GST (9% CGST):</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 700;" id="invoice-cgst">₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.9rem;">State GST (9% SGST):</td>
+                  <td style="padding: 0.4rem 0; text-align: right; font-weight: 700;" id="invoice-sgst">₹0</td>
+                </tr>
+                <tr style="border-top: 2px solid #0f172a;">
+                  <td style="padding: 0.85rem 0; font-size: 1.25rem; font-weight: 800; color: var(--text-main);">Grand Total Paid:</td>
+                  <td style="padding: 0.85rem 0; text-align: right; font-size: 1.35rem; font-weight: 800; color: var(--primary);" id="invoice-total">₹0</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom" style="border: none; padding-top: 0;">
+      <div>© 2026 NOVA LUXE Retail India Pvt. Ltd.</div>
+      <a href="index.html" style="color: #818cf8;">← Back to Storefront</a>
+    </div>
+  </footer>
+
+  <script src="js/toast.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/orders.js"></script>
+</body>
+</html>

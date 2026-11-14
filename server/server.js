@@ -20,8 +20,9 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static frontend from public directory
+// Serve static frontend (both root and public supported)
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '..')));
 
 // API Routes
 app.use('/api/products', productRoutes);
@@ -41,7 +42,7 @@ app.get('/api/health', (req, res) => {
 // Fallback to index.html for unknown HTML navigation routes
 app.use((req, res, next) => {
   if (req.method === 'GET' && req.accepts('html') && !req.path.startsWith('/api')) {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../index.html'));
   } else {
     next();
   }

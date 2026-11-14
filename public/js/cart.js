@@ -193,11 +193,11 @@ const Cart = {
             <span id="drawer-total" style="color: var(--primary);">₹0</span>
           </div>
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <a href="/checkout.html" class="btn-primary" style="justify-content: center; padding: 0.95rem;">
+            <a href="checkout.html" class="btn-primary" style="justify-content: center; padding: 0.95rem;">
               Proceed to Buy (Fast Checkout)
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
-            <a href="/cart.html" class="btn-secondary" style="justify-content: center; padding: 0.85rem;">View Full Bag & Apply Coupons</a>
+            <a href="cart.html" class="btn-secondary" style="justify-content: center; padding: 0.85rem;">View Full Bag & Apply Coupons</a>
           </div>
         </div>
       </div>
@@ -267,7 +267,7 @@ const Cart = {
           </div>
           <h3 style="color: var(--text-main); font-weight: 700;">Your shopping bag is empty</h3>
           <p style="font-size: 0.88rem; margin: 0.5rem 0 1.5rem; color: var(--text-secondary);">Explore top-rated electronics, audio, and festive specials with easy UPI payment.</p>
-          <a href="/index.html#products" class="btn-primary" style="font-size: 0.85rem;" onclick="Cart.closeDrawer()">Start Shopping Now</a>
+          <a href="index.html#products" class="btn-primary" style="font-size: 0.85rem;" onclick="Cart.closeDrawer()">Start Shopping Now</a>
         </div>
       `;
       if (footer) footer.style.display = 'none';
